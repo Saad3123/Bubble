@@ -87,24 +87,20 @@ function generateRandomRoomId() {
   // Generate a random number between 100 and 999 (inclusive)
   const roomId = Math.floor(Math.random() * (999 - 100 + 1)) + 100;
   
-  return roomId; // Convert the number to a string
+  return roomId; 
 }
 
 
     // Function to join a room
     function joinRoom(roomId) {
-      // Here you can implement the logic to join a room
       alert("Joining room " + roomId);
     }
 
 // Function to delete a room
 function deleteRoom(roomId) {
-  // Find the index of the room with the given roomId
   const roomIndex = rooms.findIndex(room => room.id === roomId);
 
-  // Check if the room with the given ID exists
   if (roomIndex !== -1) {
-    // Ask for confirmation before deleting the room
     const confirmDelete = confirm(`Are you sure you want to delete room with ID ${roomId}?`);
 
     // If user confirms deletion
@@ -115,9 +111,6 @@ function deleteRoom(roomId) {
       // Update the room list on the webpage
       populateRoomList();
 
-      // Optionally, you can perform other actions like sending a delete request to a server, etc.
-
-      // Inform the user that the room has been deleted
       alert(`Room with ID ${roomId} has been deleted.`);
     } else {
       // If the user cancels the deletion, inform them
