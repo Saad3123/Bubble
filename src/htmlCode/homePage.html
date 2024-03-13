@@ -1,33 +1,137 @@
-<!-- lol nope -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
-    <link rel="stylesheet" href="../cssFiles/homePage.css">
-    <title>Document</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="../cssFiles/homePage.css">
+
+  <title>Room Management</title>
 </head>
-<body>      
-    <div class="container">
-        <button class="left-button">Left Button</button>
-        <div class="centered-div">Centered Div</div>
-        <button class="right-button">Right Button</button>
-    </div> 
-    <div class="hamburger-menu">
-        <input id="menu__toggle" type="checkbox" />
-        <label class="menu__btn" for="menu__toggle">
-          <span></span>
-        </label>
-    
-        <ul class="menu__box">
-          <li><a class="menu__item" href="#">Home</a></li>
-          <li><a class="menu__item" href="#">About</a></li>
-          <li><a class="menu__item" href="#">Team</a></li>
-          <li><a class="menu__item" href="#">Contact</a></li>
-          <li><a class="menu__item" href="#">Twitter</a></li>
-        </ul>
-      </div>
-    
+<body>
+  <div class="content">
+    <h1>Room Management</h1>
+    <header>Available Rooms</header>    
+    <table id="roomTable">
+      <thead>
+        <tr>
+          <th>Room ID</th>
+          <th>Room Name</th>
+          <th>Action</th>
+          <th> </th>
+        </tr>
+      </thead>
+      <tbody id="roomList">
+        <!-- Room list will be populated dynamically -->
+      </tbody>
+    </table>
+
+    <div class="icon" onclick="createRoom()">+</div>
+  </div>
+
+
+  <!-- JS -->
+  <script>
+    // Sample data for demonstration
+    const rooms = [
+      { id: 1, name: "Room 1" },
+      { id: 2, name: "Room 2" },
+      { id: 3, name: "Room 3" }
+    ];
+
+    // Function to populate room list
+    function populateRoomList() {
+      const roomList = document.getElementById("roomList");
+      roomList.innerHTML = "";
+      rooms.forEach(room => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${room.id}</td>
+          <td>${room.name}</td>
+          <td><button onclick="joinRoom(${room.id})">Join</button></td>
+          <td><button onclick="deleteRoom(${room.id})">Delete</button></td>
+
+        `;
+        roomList.appendChild(row);
+      });
+    }
+
+
+    // Function to create a room
+function createRoom() {
+  const roomName = prompt("Enter the room name:");
+
+  if (roomName) {
+    // Generate a unique room ID (you may implement your own logic for generating IDs)
+    const roomId =generateRandomRoomId(); // Assuming rooms array is globally accessible
+
+    // Create a new room object
+    const newRoom = { id: roomId, name: roomName };
+
+    // Add the new room to the list of rooms
+    rooms.push(newRoom);
+
+    // Update the room list on the webpage
+    populateRoomList();
+
+    // Optionally, you can perform other actions like sending the room data to a server, etc.
+
+    // Inform the user that the room has been created
+    alert(`Room "${roomName}" created with ID: ${roomId}`);
+  } else {
+    // If the user didn't provide a room name, inform them
+    alert("No room name provided. Room creation cancelled.");
+  }
+}
+// Function to generate a random room ID with a random number of integers
+function generateRandomRoomId() {
+  // Generate a random number between 100 and 999 (inclusive)
+  const roomId = Math.floor(Math.random() * (999 - 100 + 1)) + 100;
+  
+  return roomId; // Convert the number to a string
+}
+
+
+    // Function to join a room
+    function joinRoom(roomId) {
+      // Here you can implement the logic to join a room
+      alert("Joining room " + roomId);
+    }
+
+// Function to delete a room
+function deleteRoom(roomId) {
+  // Find the index of the room with the given roomId
+  const roomIndex = rooms.findIndex(room => room.id === roomId);
+
+  // Check if the room with the given ID exists
+  if (roomIndex !== -1) {
+    // Ask for confirmation before deleting the room
+    const confirmDelete = confirm(`Are you sure you want to delete room with ID ${roomId}?`);
+
+    // If user confirms deletion
+    if (confirmDelete) {
+      // Remove the room from the array
+      rooms.splice(roomIndex, 1);
+
+      // Update the room list on the webpage
+      populateRoomList();
+
+      // Optionally, you can perform other actions like sending a delete request to a server, etc.
+
+      // Inform the user that the room has been deleted
+      alert(`Room with ID ${roomId} has been deleted.`);
+    } else {
+      // If the user cancels the deletion, inform them
+      alert(`Deletion of room with ID ${roomId} cancelled.`);
+    }
+  } else {
+    // If the room with the given ID does not exist, inform the user
+    alert(`Room with ID ${roomId} does not exist.`);
+  }
+}
+
+
+    // Initial population of room list
+    populateRoomList();
+  </script>
 </body>
 </html>
