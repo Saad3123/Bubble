@@ -1,0 +1,3 @@
+npm init
+npm -g install live-server
+live-server //to host, it automatically detects the changes and refreshes the page for you

@@ -1,0 +1,7 @@
+live-server to see the status code and no need to refresh
+node will be used as i move deeper (http)
+
+
+problems:
+    i have to run server commands from the top of the directory, if not it doesnt recognize imgs
+    
