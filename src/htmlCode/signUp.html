@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- Created By CodingNepal -->
 <html lang="en" dir="ltr">
    <head>
       <meta charset="utf-8">
@@ -11,14 +10,18 @@
       <div class="bg-img"> 
          <div class="content">
             <header>SIGN UP</header>
-            <form action="#">
+            <form id="signUpForm" method="POST">
                <div class="field">
                   <span class="fa fa-user"></span>
-                  <input type="text" required placeholder="Email or Phone">
+                  <input id="email" name="email" type="text" required placeholder="Email or Phone">
+               </div>
+               <div class="field space">
+                  <span class="fa fa-user"></span>
+                  <input id="username" name="username" type="text" required placeholder="Username">
                </div>
                <div class="field space">
                   <span class="fa fa-lock"></span>
-                  <input type="password" class="pass-key" required placeholder="Password">
+                  <input id="password" name="password" type="password" class="pass-key" required placeholder="Password">
                   <span class="show">SHOW</span>
                </div>
                <div class="pass">
@@ -60,6 +63,31 @@
             showBtn.style.color = "#222";
           }
          });
+
+         document.getElementById('signUpForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            const formData = new FormData(this);
+            fetch("http://localhost:5000/user_register", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    alert('Account registered');
+                } else {
+                    alert('Account not registered');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
       </script>
    </body>
 </html>
