@@ -7,124 +7,236 @@
 
   <title>Room Management</title>
 </head>
-<body>
-  <div class="content">
-    <h1>Room Management</h1>
-    <header>Available Rooms</header>    
-    <table id="roomTable">
-      <thead>
-        <tr>
-          <th>Room ID</th>
-          <th>Room Name</th>
-          <th>Action</th>
-          <th> </th>
-        </tr>
-      </thead>
-      <tbody id="roomList">
-        <!-- Room list will be populated dynamically -->
-      </tbody>
-    </table>
-
-    <div class="icon" onclick="createRoom()">+</div>
-  </div>
-
+  <body>
+    <div class="content">
+      <h1>Room Management</h1>
+      <header>Available Rooms</header>    
+      <table id="roomTable">
+        <thead>
+          <tr>
+            <th>Room ID</th>
+            <th>Room Name</th>
+            <th>Action</th>
+            <th> </th>
+          </tr>
+        </thead>
+        <tbody id="chatroomList">
+          <!-- Room list will be populated dynamically -->
+        </tbody>
+      </table>
+      <div class="icon" onclick="createRoom()">+</div>
+    </div>
+  </body>
 
   <!-- JS -->
   <script>
-    // Sample data for demonstration
-    const rooms = [
-      { id: 1, name: "Room 1" },
-      { id: 2, name: "Room 2" },
-      { id: 3, name: "Room 3" }
-    ];
-
-    // Function to populate room list
-    function populateRoomList() {
-      const roomList = document.getElementById("roomList");
-      roomList.innerHTML = "";
-      rooms.forEach(room => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${room.id}</td>
-          <td>${room.name}</td>
-          <td><button onclick="joinRoom(${room.id})">Join</button></td>
-          <td><button onclick="deleteRoom(${room.id})">Delete</button></td>
-
-        `;
-        roomList.appendChild(row);
-      });
+    // Function to populate room list from fetched data
+    function populateChatroomList() {
+      fetch("http://127.0.0.1:5000/chatrooms_list", {
+                method: 'POST',
+        })
+        .then(response => response.json())
+        .then(data => {
+          chatroomsFromDB = data.success;
+          const chatroomList = document.getElementById("chatroomList");
+          chatroomList.innerHTML = "";
+          console.log("test");
+          console.log(chatroomsFromDB);
+          for (let i = 0; i < chatroomsFromDB.length; i++) {
+            const chatroom = chatroomsFromDB[i];
+            const row = document.createElement("tr");
+            row.innerHTML = `
+              <td>${chatroom.chatroomid}</td>
+              <td>${chatroom.name}</td>
+              <td><button onclick="joinRoom(${chatroom.chatroomid})">Join</button></td>
+              <td><button onclick="deleteRoom(${chatroom.chatroomid})">Delete</button></td>
+              `;
+              chatroomList.appendChild(row);
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching rooms:', error);
+        });
     }
 
+    function joinRoom(chatroomid) {
+      const formData = new FormData();
+      formData.append('chatroomid', chatroomid);
+      fetch('http://127.0.0.1:5000/chatrooms_password_status', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            passwordStatus = data.success
+            console.log(passwordStatus);
 
-    // Function to create a room
-function createRoom() {
-  const roomName = prompt("Enter the room name:");
+            if(passwordStatus){
+              const roomPassword = prompt("Enter the room password:");
+              formData.append('password', roomPassword)
+            }
+            formData.append('password', JSON.stringify(null));
 
-  if (roomName) {
-    // Generate a unique room ID (you may implement your own logic for generating IDs)
-    const roomId =generateRandomRoomId(); // Assuming rooms array is globally accessible
+            fetch('http://127.0.0.1:5000/chatrooms_join', {
+              method: 'POST',
+              body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                alert(`Joining room ${chatroomid}`);
+              } else {
+                alert("Failed to join room");
+              }
+            })
+            .catch(error => {
+              console.error('Error joining room:', error);
+              return;
+            });
 
-    // Create a new room object
-    const newRoom = { id: roomId, name: roomName };
-
-    // Add the new room to the list of rooms
-    rooms.push(newRoom);
-
-    // Update the room list on the webpage
-    populateRoomList();
-
-    // Optionally, you can perform other actions like sending the room data to a server, etc.
-
-    // Inform the user that the room has been created
-    alert(`Room "${roomName}" created with ID: ${roomId}`);
-  } else {
-    // If the user didn't provide a room name, inform them
-    alert("No room name provided. Room creation cancelled.");
-  }
-}
-// Function to generate a random room ID with a random number of integers
-function generateRandomRoomId() {
-  // Generate a random number between 100 and 999 (inclusive)
-  const roomId = Math.floor(Math.random() * (999 - 100 + 1)) + 100;
-  
-  return roomId; 
-}
-
-
-    // Function to join a room
-    function joinRoom(roomId) {
-      alert("Joining room " + roomId);
+        })
+        .catch(error => {
+          console.error('Error joining room:', error);
+          return;
+        });
     }
 
-// Function to delete a room
-function deleteRoom(roomId) {
-  const roomIndex = rooms.findIndex(room => room.id === roomId);
+    function deleteRoom(chatroomid) {
+      const confirmDelete = confirm(`Are you sure you want to delete room with ID ${chatroomid}?`);
 
-  if (roomIndex !== -1) {
-    const confirmDelete = confirm(`Are you sure you want to delete room with ID ${roomId}?`);
+      // If user confirms deletion
+      if (confirmDelete) {
+        // Prepare the data to be sent in the request body
+        const formData = new FormData();
+        formData.append('chatroomid', chatroomid);
 
-    // If user confirms deletion
-    if (confirmDelete) {
-      // Remove the room from the array
-      rooms.splice(roomIndex, 1);
-
-      // Update the room list on the webpage
-      populateRoomList();
-
-      alert(`Room with ID ${roomId} has been deleted.`);
-    } else {
-      // If the user cancels the deletion, inform them
-      alert(`Deletion of room with ID ${roomId} cancelled.`);
+        // Make a POST request to delete the room
+        fetch('http://127.0.0.1:5000/chatrooms_delete', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert(`Room with ID ${chatroomid} has been deleted.`);
+            // Refresh the room list
+            populateChatroomList();
+          } else {
+            alert(`Failed to delete room with ID ${chatroomid}.`);
+          }
+        })
+        .catch(error => {
+          console.error('Error deleting room:', error);
+        });
+      }
     }
-  } else {
-    // If the room with the given ID does not exist, inform the user
-    alert(`Room with ID ${roomId} does not exist.`);
-  }
-}
 
+    function createRoom() {
+      const roomName = prompt("Enter the room name:");
+      const roomPassword = prompt("Enter the room password (leave blank for none):");
 
-    // Initial population of room list
-    populateRoomList();
+      if (roomName) {
+        const formData = new FormData();
+        formData.append('name', roomName);
+        formData.append('password', roomPassword);
+
+        fetch("http://127.0.0.1:5000/chatrooms_create", {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert("Room created successfully");
+            // Refresh the room list
+            populateChatroomList();
+          } else {
+            alert("Failed to create room");
+          }
+        })
+        .catch(error => {
+          console.error('Error creating room:', error);
+        });
+      } else {
+        alert("Room creation cancelled. Please enter both name and password.");
+      }
+    }
+
+    window.onload = function() {
+      populateChatroomList()
+    };
   </script>
-</body>
 </html>
+
+
+
+
+<!-- //     // Function to create a room
+// function createRoom() {
+//   const roomName = prompt("Enter the room name:");
+
+//   if (roomName) {
+//     // Generate a unique room ID (you may implement your own logic for generating IDs)
+//     const roomId =generateRandomRoomId(); // Assuming rooms array is globally accessible
+
+//     // Create a new room object
+//     const newRoom = { id: roomId, name: roomName };
+
+//     // Add the new room to the list of rooms
+//     rooms.push(newRoom);
+
+//     // Update the room list on the webpage
+//     populateRoomList();
+
+//     // Optionally, you can perform other actions like sending the room data to a server, etc.
+
+//     // Inform the user that the room has been created
+//     alert(`Room "${roomName}" created with ID: ${roomId}`);
+//   } else {
+//     // If the user didn't provide a room name, inform them
+//     alert("No room name provided. Room creation cancelled.");
+//   }
+// }
+// // Function to generate a random room ID with a random number of integers
+// function generateRandomRoomId() {
+//   // Generate a random number between 100 and 999 (inclusive)
+//   const roomId = Math.floor(Math.random() * (999 - 100 + 1)) + 100;
+  
+//   return roomId; 
+// }
+
+
+//     // Function to join a room
+//     function joinRoom(roomId) {
+//       alert("Joining room " + roomId);
+//     }
+
+// // Function to delete a room
+// function deleteRoom(roomId) {
+//   const roomIndex = rooms.findIndex(room => room.id === roomId);
+
+//   if (roomIndex !== -1) {
+//     const confirmDelete = confirm(`Are you sure you want to delete room with ID ${roomId}?`);
+
+//     // If user confirms deletion
+//     if (confirmDelete) {
+//       // Remove the room from the array
+//       rooms.splice(roomIndex, 1);
+
+//       // Update the room list on the webpage
+//       populateRoomList();
+
+//       alert(`Room with ID ${roomId} has been deleted.`);
+//     } else {
+//       // If the user cancels the deletion, inform them
+//       alert(`Deletion of room with ID ${roomId} cancelled.`);
+//     }
+//   } else {
+//     // If the room with the given ID does not exist, inform the user
+//     alert(`Room with ID ${roomId} does not exist.`);
+//   }
+// }
+
+
+//     // Initial population of room list
+//     populateRoomList(); -->
