@@ -48,8 +48,8 @@
             row.innerHTML = `
               <td>${chatroom.chatroomid}</td>
               <td>${chatroom.name}</td>
-              <td><button onclick="joinRoom(${chatroom.id})">Join</button></td>
-              <td><button onclick="deleteRoom(${chatroom.id})">Delete</button></td>
+              <td><button onclick="joinRoom(${chatroom.chatroomid})">Join</button></td>
+              <td><button onclick="deleteRoom(${chatroom.chatroomid})">Delete</button></td>
               `;
               chatroomList.appendChild(row);
           }
