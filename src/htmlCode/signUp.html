@@ -44,7 +44,7 @@
             </div>
             <div class="signup">
                alredy have an account?
-               <a href="index.html">Signup Now</a>
+               <a href="index.html">signin</a>
             </div>
          </div>
       </div>
@@ -67,7 +67,7 @@
          document.getElementById('signUpForm').addEventListener('submit', function(event) {
             event.preventDefault(); // Prevent the default form submission
             const formData = new FormData(this);
-            fetch("http://localhost:5000/user_register", {
+            fetch("http://127.0.0.1:5000/user_register", {
                 method: 'POST',
                 body: formData
             })

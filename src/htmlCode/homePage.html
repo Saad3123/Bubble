@@ -26,11 +26,17 @@
     </table>
 
     <div class="icon" onclick="createRoom()">+</div>
+    <span id="username"></span> <!-- Display the username here -->
   </div>
 
 
   <!-- JS -->
   <script>
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) {
+        document.getElementById('welcomeMessage').textContent += storedUsername;
+    }
+
     // Sample data for demonstration
     const rooms = [
       { id: 1, name: "Room 1" },
@@ -55,73 +61,80 @@
       });
     }
 
-
     // Function to create a room
-function createRoom() {
-  const roomName = prompt("Enter the room name:");
+    function createRoom() {
+      const roomName = prompt("Enter the room name:");
 
-  if (roomName) {
-    // Generate a unique room ID (you may implement your own logic for generating IDs)
-    const roomId =generateRandomRoomId(); // Assuming rooms array is globally accessible
+      if (roomName) {
+        const roomId = generateRandomRoomId(); // Assuming rooms array is globally accessible
 
-    // Create a new room object
-    const newRoom = { id: roomId, name: roomName };
+        // Create a new room object
+        const newRoom = { id: roomId, name: roomName };
 
-    // Add the new room to the list of rooms
-    rooms.push(newRoom);
+        // Add the new room to the list of rooms
+        rooms.push(newRoom);
 
-    // Update the room list on the webpage
-    populateRoomList();
+        // Update the room list on the webpage
+        populateRoomList();
 
-    // Optionally, you can perform other actions like sending the room data to a server, etc.
+        // Fetch request to create the room on the server
+        fetch("http://127.0.0.1:5000/chatrooms_create", {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${authToken}`, // Include the token in the Authorization header
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ roomName: roomName })
+        })
+        .then(response => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error('Error:', error));
 
-    // Inform the user that the room has been created
-    alert(`Room "${roomName}" created with ID: ${roomId}`);
-  } else {
-    // If the user didn't provide a room name, inform them
-    alert("No room name provided. Room creation cancelled.");
-  }
-}
-// Function to generate a random room ID with a random number of integers
-function generateRandomRoomId() {
-  // Generate a random number between 100 and 999 (inclusive)
-  const roomId = Math.floor(Math.random() * (999 - 100 + 1)) + 100;
-  
-  return roomId; 
-}
+        alert(`Room "${roomName}" created with ID: ${roomId}`);
+      } else {
+        alert("No room name provided. Room creation cancelled.");
+      }
+    }
 
+    // Function to generate a random room ID with a random number of integers
+    function generateRandomRoomId() {
+      // Generate a random number between 100 and 999 (inclusive)
+      const roomId = Math.floor(Math.random() * (999 - 100 + 1)) + 100;
+      
+      return roomId; 
+    }
 
     // Function to join a room
     function joinRoom(roomId) {
-      alert("Joining room " + roomId);
+      // Redirect to the chatroom page with the room ID
+      window.location.href = `chatroom.html?roomId=${roomId}`;
     }
 
-// Function to delete a room
-function deleteRoom(roomId) {
-  const roomIndex = rooms.findIndex(room => room.id === roomId);
+    // Function to delete a room
+    function deleteRoom(roomId) {
+      const roomIndex = rooms.findIndex(room => room.id === roomId);
 
-  if (roomIndex !== -1) {
-    const confirmDelete = confirm(`Are you sure you want to delete room with ID ${roomId}?`);
+      if (roomIndex !== -1) {
+        const confirmDelete = confirm(`Are you sure you want to delete room with ID ${roomId}?`);
 
-    // If user confirms deletion
-    if (confirmDelete) {
-      // Remove the room from the array
-      rooms.splice(roomIndex, 1);
+        // If user confirms deletion
+        if (confirmDelete) {
+          // Remove the room from the array
+          rooms.splice(roomIndex, 1);
 
-      // Update the room list on the webpage
-      populateRoomList();
+          // Update the room list on the webpage
+          populateRoomList();
 
-      alert(`Room with ID ${roomId} has been deleted.`);
-    } else {
-      // If the user cancels the deletion, inform them
-      alert(`Deletion of room with ID ${roomId} cancelled.`);
+          alert(`Room with ID ${roomId} has been deleted.`);
+        } else {
+          // If the user cancels the deletion, inform them
+          alert(`Deletion of room with ID ${roomId} cancelled.`);
+        }
+      } else {
+        // If the room with the given ID does not exist, inform the user
+        alert(`Room with ID ${roomId} does not exist.`);
+      }
     }
-  } else {
-    // If the room with the given ID does not exist, inform the user
-    alert(`Room with ID ${roomId} does not exist.`);
-  }
-}
-
 
     // Initial population of room list
     populateRoomList();

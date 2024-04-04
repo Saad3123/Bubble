@@ -13,7 +13,7 @@
    <div class="bg-img"> 
        <div class="content">
            <header>LOGIN</header>
-           <form id="loginForm" method="POST" action="http://localhost:5000/user_login">
+           <form id="loginForm" method="POST" action="http://127.0.0.1:5000/user_login">
                <div class="field">
                    <span class="fa fa-user"></span>
                    <input type="text" name="email" required placeholder="Email or Phone">
@@ -69,7 +69,7 @@
       document.getElementById('loginForm').addEventListener('submit', function(event) {
          event.preventDefault();
             var formData = new FormData(this);
-            fetch("http://localhost:5000/user_login", {
+            fetch("http://127.0.0.1:5000/user_login", {
                 method: 'POST',
                 body: formData
             })
@@ -82,6 +82,11 @@
             .then(data => {
                 if (data.success) {
                     alert('Login successful!');
+                    localStorage.setItem('authToken', data.token);
+                    window.location.href = "homePage.html";
+                    //setting token
+                    // takes to homepage
+              
                 } else {
                     alert('Login failed! Please check your credentials.');
                 }
