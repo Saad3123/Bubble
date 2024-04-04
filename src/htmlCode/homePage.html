@@ -46,7 +46,7 @@
             const chatroom = chatroomsFromDB[i];
             const row = document.createElement("tr");
             row.innerHTML = `
-              <td>${chatroom.id}</td>
+              <td>${chatroom.chatroomid}</td>
               <td>${chatroom.name}</td>
               <td><button onclick="joinRoom(${chatroom.id})">Join</button></td>
               <td><button onclick="deleteRoom(${chatroom.id})">Delete</button></td>

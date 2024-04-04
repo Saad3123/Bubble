@@ -49,14 +49,15 @@ def user_register():
 def user_return_info():
     email = request.form.get('email')
     result = db_connector.user_return_info(email)
-    return jsonify({"success": result})  # Placeholder response
+    formatted_user_info = [{'userid': result[0], 'email': result[1], 'username': result[3], 'bio': result[4]}]
+    return jsonify({"success": formatted_user_info})  # Placeholder response
 
 
 # Chatroom functions
 @app.route('/chatrooms_list', methods=['POST'])
 def chatrooms_list():
     result = db_connector.chatrooms_list()
-    formatted_rooms = [{'id': room[0], 'name': room[1]} for room in result]
+    formatted_rooms = [{'chatroomid': room[0], 'name': room[1]} for room in result]
     return jsonify({"success": formatted_rooms})  # Placeholder response
 
 @app.route('/chatrooms_delete', methods=['POST'])
