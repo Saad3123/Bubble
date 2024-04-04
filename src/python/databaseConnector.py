@@ -7,7 +7,7 @@ CORS(app)
 
 # Initialize your DatabaseConnector
 db_connector = DatabaseConnector(
-    host='localhost', 
+    host='127.0.0.1', 
     username='csci375team2', 
     password='sihj715gtdjx', 
     database='csci375team2_testdb_bubble'
@@ -22,6 +22,14 @@ def login():
 def signup():
     return send_from_directory('htmlCode', 'signUp.html')
 
+@app.route('/homePage')
+def homepage():
+    return send_from_directory('htmlCode', 'homePage.html')
+
+
+
+
+# user functions
 @app.route('/user_login', methods=['POST'])
 def user_login():
     email = request.form.get('email')
@@ -35,6 +43,53 @@ def user_register():
     username = request.form.get('username')
     password = request.form.get('password')
     result = db_connector.user_register(email, username, password)
+    return jsonify({"success": result})  # Placeholder response
+
+@app.route('/user_return_info', methods=['POST'])
+def user_return_info():
+    email = request.form.get('email')
+    result = db_connector.user_return_info(email)
+    formatted_user_info = [{'userid': result[0], 'email': result[1], 'username': result[3], 'bio': result[4]}]
+    return jsonify({"success": formatted_user_info})  # Placeholder response
+
+
+# Chatroom functions
+@app.route('/chatrooms_list', methods=['POST'])
+def chatrooms_list():
+    result = db_connector.chatrooms_list()
+    formatted_rooms = [{'chatroomid': room[0], 'name': room[1]} for room in result]
+    return jsonify({"success": formatted_rooms})  # Placeholder response
+
+@app.route('/chatrooms_delete', methods=['POST'])
+def chatrooms_delete():
+    chatroomid = request.form.get('chatroomid')
+    result = db_connector.chatrooms_delete(chatroomid)
+    return jsonify({"success": result})  # Placeholder response
+
+@app.route('/chatrooms_create', methods=['POST'])
+def chatrooms_create():
+    name = request.form.get('name')
+    password = request.form.get('password')
+    if len(password) == 0:
+        result = db_connector.chatrooms_create(name)
+    else:
+        result = db_connector.chatrooms_create(name, password)
+    return jsonify({"success": result})  # Placeholder response
+
+@app.route('/chatrooms_password_status', methods=['POST'])
+def chatrooms_password_status():
+    chatroomid = request.form.get('chatroomid')
+    result = db_connector.chatrooms_password_status(chatroomid)
+    return jsonify({"success": result})  # Placeholder response
+
+@app.route('/chatrooms_join', methods=['POST'])
+def chatrooms_join():
+    chatroomid = request.form.get('chatroomid')
+    password = request.form.get('password')
+    if password == 'null':
+        password = None
+    print(request.form.get('password'))
+    result = db_connector.chatrooms_join(chatroomid, password)
     return jsonify({"success": result})  # Placeholder response
 
 if __name__ == '__main__':

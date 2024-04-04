@@ -251,7 +251,7 @@ class DatabaseConnector:
             - retuns false if not deleted
     """
     def chatrooms_list(self):
-        query = "SELECT chatroomid,name FROM CHATROOMS"
+        query = "SELECT chatroomid, name FROM CHATROOMS ORDER BY name ASC"
         try:
             self.cursor.execute(query)
             chatrooms = self.cursor.fetchall()
@@ -289,6 +289,31 @@ class DatabaseConnector:
                 return None
         except mysql.connector.Error as err:
             print("Error joining chatroom:", err)
+            return None
+
+    """
+        @var
+            chatroomid - (string) chatroomid to check
+        @return
+            - returns True is chatroom has password
+            - return False if chatroom does not have a password
+    """
+    def chatrooms_password_status(self, chatroomid):
+        query = "SELECT IFNULL(password, 'No password') AS password_status FROM CHATROOMS WHERE chatroomid = %s"
+        values = (chatroomid,)
+        
+        try:
+            self.cursor.execute(query, values)
+            result = self.cursor.fetchone()
+            if result:
+                if result[0] == 'No password':
+                    return False
+                else:
+                    return True
+            else:
+                return "Chatroom not found"
+        except mysql.connector.Error as err:
+            print("Error checking chatroom password status:", err)
             return None
 
     """
