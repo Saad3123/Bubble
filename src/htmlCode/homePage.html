@@ -30,6 +30,7 @@
 
   <!-- JS -->
   <script>
+    console.log(localStorage.getItem('userid'));
     // Function to populate room list from fetched data
     function populateChatroomList() {
       fetch("http://127.0.0.1:5000/chatrooms_list", {
@@ -85,6 +86,8 @@
             .then(data => {
               if (data.success) {
                 alert(`Joining room ${chatroomid}`);
+                localStorage.setItem('chatroomid', chatroomid);
+                window.location.href = "chatroom.html";
               } else {
                 alert("Failed to join room");
               }
@@ -163,80 +166,27 @@
     }
 
     window.onload = function() {
-      populateChatroomList()
+      populateChatroomList();
     };
+
+    // window.addEventListener('beforeunload', function(event) {
+    //   // Check if each item exists in localStorage before removing it
+    //   if (localStorage.getItem('userid')) {
+    //       localStorage.removeItem('userid');
+    //   }
+    //   if (localStorage.getItem('email')) {
+    //       localStorage.removeItem('email');
+    //   }
+    //   if (localStorage.getItem('username')) {
+    //       localStorage.removeItem('username');
+    //   }
+    //   if (localStorage.getItem('bio')) {
+    //       localStorage.removeItem('bio');
+    //   }
+    //   if (localStorage.getItem('chatroomid')){
+    //     localStorage.removeItem('chatroomid');
+    //   }
+    // });
+
   </script>
 </html>
-
-
-
-
-<!-- //     // Function to create a room
-// function createRoom() {
-//   const roomName = prompt("Enter the room name:");
-
-//   if (roomName) {
-//     // Generate a unique room ID (you may implement your own logic for generating IDs)
-//     const roomId =generateRandomRoomId(); // Assuming rooms array is globally accessible
-
-//     // Create a new room object
-//     const newRoom = { id: roomId, name: roomName };
-
-//     // Add the new room to the list of rooms
-//     rooms.push(newRoom);
-
-//     // Update the room list on the webpage
-//     populateRoomList();
-
-//     // Optionally, you can perform other actions like sending the room data to a server, etc.
-
-//     // Inform the user that the room has been created
-//     alert(`Room "${roomName}" created with ID: ${roomId}`);
-//   } else {
-//     // If the user didn't provide a room name, inform them
-//     alert("No room name provided. Room creation cancelled.");
-//   }
-// }
-// // Function to generate a random room ID with a random number of integers
-// function generateRandomRoomId() {
-//   // Generate a random number between 100 and 999 (inclusive)
-//   const roomId = Math.floor(Math.random() * (999 - 100 + 1)) + 100;
-  
-//   return roomId; 
-// }
-
-
-//     // Function to join a room
-//     function joinRoom(roomId) {
-//       alert("Joining room " + roomId);
-//     }
-
-// // Function to delete a room
-// function deleteRoom(roomId) {
-//   const roomIndex = rooms.findIndex(room => room.id === roomId);
-
-//   if (roomIndex !== -1) {
-//     const confirmDelete = confirm(`Are you sure you want to delete room with ID ${roomId}?`);
-
-//     // If user confirms deletion
-//     if (confirmDelete) {
-//       // Remove the room from the array
-//       rooms.splice(roomIndex, 1);
-
-//       // Update the room list on the webpage
-//       populateRoomList();
-
-//       alert(`Room with ID ${roomId} has been deleted.`);
-//     } else {
-//       // If the user cancels the deletion, inform them
-//       alert(`Deletion of room with ID ${roomId} cancelled.`);
-//     }
-//   } else {
-//     // If the room with the given ID does not exist, inform the user
-//     alert(`Room with ID ${roomId} does not exist.`);
-//   }
-// }
-
-
-//     // Initial population of room list
-//     populateRoomList(); -->

@@ -1,9 +1,12 @@
 from flask import Flask, send_from_directory, request, jsonify
 from flask_cors import CORS
+from flask_socketio import SocketIO, emit
+
 from databaseclass import DatabaseConnector
 
 app = Flask(__name__)
 CORS(app)
+socketio = SocketIO(app, cors_allowed_origins="http://127.0.0.1:5500")
 
 # Initialize your DatabaseConnector
 db_connector = DatabaseConnector(
@@ -26,9 +29,6 @@ def signup():
 def homepage():
     return send_from_directory('htmlCode', 'homePage.html')
 
-
-
-
 # user functions
 @app.route('/user_login', methods=['POST'])
 def user_login():
@@ -49,9 +49,8 @@ def user_register():
 def user_return_info():
     email = request.form.get('email')
     result = db_connector.user_return_info(email)
-    formatted_user_info = [{'userid': result[0], 'email': result[1], 'username': result[3], 'bio': result[4]}]
+    formatted_user_info = {'userid': result[0], 'email': result[1], 'username': result[2], 'bio': result[3]}
     return jsonify({"success": formatted_user_info})  # Placeholder response
-
 
 # Chatroom functions
 @app.route('/chatrooms_list', methods=['POST'])
@@ -92,5 +91,28 @@ def chatrooms_join():
     result = db_connector.chatrooms_join(chatroomid, password)
     return jsonify({"success": result})  # Placeholder response
 
+@app.route('/messages_send', methods=['POST'])
+def messages_send():
+    chatroomid = request.form.get('chatroomid')
+    userid = request.form.get('userid')
+    message = request.form.get('message')
+    print(message)
+    result = db_connector.messages_send(userid, chatroomid, message)
+    socketio.emit('message_new', chatroomid)  # Emitting the message to all connected clients
+    return jsonify({"success": result})  # Placeholder response
+
+@app.route('/messages_list', methods=['POST'])
+def messages_list():
+    chatroomid = request.form.get('chatroomid')
+    result = db_connector.messages_list_in_chatroom(chatroomid)
+    formatted_messages = [{'messageid': message[0], 'userid': message[1], 'username': message[2], 'time': message[3], 'text': message[4]} for message in result]
+    return jsonify({"success": formatted_messages})  # Placeholder response
+
+
+
+@socketio.on('connect')
+def handle_connect():
+    print('Client connected')
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    socketio.run(app, debug=True)
