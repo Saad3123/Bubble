@@ -12,10 +12,7 @@ student_account=$1
 # Step 1: Establish SSH tunnel to Dolphin
 echo "Enter your SSH password when prompted."
 ssh -N -L 3306:dolphin.csci.viu.ca:3306 $student_account@otter.csci.viu.ca &
-ssh_pid=$!
 
-# Check if SSH tunnel was successfully established
-wait $ssh_pid
 if [ $? -ne 0 ]; then
     echo "Failed to establish SSH tunnel. Exiting."
     exit 1

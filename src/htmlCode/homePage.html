@@ -4,7 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../cssFiles/homePage.css">
-
+  <style>
+    th,h1 {
+      color:white; /* Set text color to light gray */
+    }
+  </style>
   <title>Room Management</title>
 </head>
   <body>
@@ -16,7 +20,7 @@
           <tr>
             <th>Room ID</th>
             <th>Room Name</th>
-            <th>Action</th>
+            <th></th>
             <th> </th>
           </tr>
         </thead>
@@ -47,11 +51,10 @@
             const chatroom = chatroomsFromDB[i];
             const row = document.createElement("tr");
             row.innerHTML = `
-              <td>${chatroom.chatroomid}</td>
-              <td>${chatroom.name}</td>
-              <td><button onclick="joinRoom(${chatroom.chatroomid})">Join</button></td>
-              <td><button onclick="deleteRoom(${chatroom.chatroomid})">Delete</button></td>
-              `;
+              <td><strong>${chatroom.chatroomid}</strong></td>
+              <td><strong>${chatroom.name}</strong></td>
+              <button onclick="joinRoom(${chatroom.chatroomid})" class="join">Join</button>
+              <button onclick="deleteRoom(${chatroom.chatroomid})" class="delete">Delete</button>`;
               chatroomList.appendChild(row);
           }
         })
