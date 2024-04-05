@@ -234,12 +234,19 @@ class DatabaseConnector:
             - retuns false if not deleted
     """
     def chatrooms_delete(self, chatroomid):
-        query = "DELETE FROM CHATROOMS WHERE chatroomid = %s"
-        values = (chatroomid,)
         try:
-            self.cursor.execute(query, values)
+            # Delete messages associated with the chatroom
+            delete_messages_query = "DELETE FROM MESSAGES WHERE chatroomid = %s"
+            self.cursor.execute(delete_messages_query, (chatroomid,))
+            
+            # Delete the chatroom
+            delete_chatroom_query = "DELETE FROM CHATROOMS WHERE chatroomid = %s"
+            self.cursor.execute(delete_chatroom_query, (chatroomid,))
+            
+            # Commit the changes
             self.connection.commit()
-            print("Chatroom deleted successfully.")
+            
+            print("Chatroom and associated messages deleted successfully.")
             return True
         except mysql.connector.Error as err:
             print("Error deleting chatroom:", err)
@@ -409,7 +416,7 @@ class DatabaseConnector:
             - returns false otherwise
     """
     def messages_list_in_chatroom(self, chatroomid, limit=None):
-        query = "SELECT * FROM MESSAGES WHERE chatroomid = %s ORDER BY time DESC"
+        query = "SELECT messageid,USERS.userid,username,time,message FROM MESSAGES JOIN USERS WHERE chatroomid = %s AND USERS.userid = MESSAGES.userid ORDER BY time DESC"
         if limit is not None:
             query += " LIMIT %s"
             values = (chatroomid, limit)

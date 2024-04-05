@@ -15,7 +15,7 @@
            <form id="loginForm" method="POST">
                <div class="field">
                    <span class="fa fa-user"></span>
-                   <input type="text" name="email" required placeholder="Email or Phone">
+                   <input id="email" type="text" name="email" required placeholder="Email or Phone">
                </div>
                <div class="field space">
                    <span class="fa fa-lock"></span>
@@ -55,9 +55,11 @@
    </script>
    <!-- Database connector -->
    <script>
-      document.getElementById('loginForm').addEventListener('submit', function(event) {
-         event.preventDefault();
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const email = document.getElementById('email').value;
             var formData = new FormData(this);
+
             fetch("http://127.0.0.1:5000/user_login", {
                 method: 'POST',
                 body: formData
@@ -71,8 +73,7 @@
             .then(data => {
                 if (data.success) {
                     alert('Login successful!');
-                    localStorage.setItem('authToken', data.token);
-                    window.location.href = "homePage.html";
+                    continueToHompage(email);
                     //setting token
                     // takes to homepage
               
@@ -84,6 +85,58 @@
                 console.error('Error:', error);
             });
         });
+
+        function continueToHompage(email){
+            const formData = new FormData();
+            formData.append('email', email)
+            fetch("http://127.0.0.1:5000/user_return_info", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    results = data.success; 
+                    console.log(results);
+                    localStorage.setItem('userid', results.userid);
+                    localStorage.setItem('email', results.email);
+                    localStorage.setItem('username', results.username);
+                    localStorage.setItem('bio', results.bio);
+                    window.location.href = "homePage.html";
+                } else {
+                    alert('Failed to retrieve user data!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+
+        // window.addEventListener('beforeunload', function(event) {
+        //     // Check if each item exists in localStorage before removing it
+        //     if (localStorage.getItem('userid')) {
+        //         localStorage.removeItem('userid');
+        //     }
+        //     if (localStorage.getItem('email')) {
+        //         localStorage.removeItem('email');
+        //     }
+        //     if (localStorage.getItem('username')) {
+        //         localStorage.removeItem('username');
+        //     }
+        //     if (localStorage.getItem('bio')) {
+        //         localStorage.removeItem('bio');
+        //     }
+        //     if (localStorage.getItem('chatroomid')){
+        //         localStorage.removeItem('chatroomid');
+        //     }
+        // });
+
    </script>
 </body>
 </html>

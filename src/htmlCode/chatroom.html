@@ -23,30 +23,30 @@
 
   <!-- JS -->
   <script>
-    const authToken = localStorage.getItem('authToken'); // Get the authentication token from localStorage
-    const username = localStorage.getItem('username'); // Get the username from localStorage
-
-    document.getElementById("welcomeMessage").textContent = `Welcome ${username}`;
+    console.log(localStorage.getItem('userid'));
 
     // Function to fetch and display chat messages
-    function fetchChatMessages() {
+    function populateMessage() {
+      const formData = new FormData();
+      formData.append('chatroomid', localStorage.getItem('chatroomid'));
       // Fetch chat messages from the server
-      fetch("http://127.0.0.1:5000/chat_messages", {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${authToken}` // Include the token in the Authorization header
-        }
-      })
+      fetch("http://127.0.0.1:5000/messages_list", {
+            method: 'POST',
+            body: formData
+        })
       .then(response => response.json())
       .then(data => {
+        messagesFromDB = data.success;
         const chatMessages = document.getElementById("chatMessages");
         chatMessages.innerHTML = ""; // Clear previous messages
 
-        data.forEach(message => {
+        for (let i = 0; i < messagesFromDB.length; i++) {
+          message = messagesFromDB[i];
+          console.log(message);
           const messageElement = document.createElement("div");
-          messageElement.textContent = `${message.sender}: ${message.text}`;
+          messageElement.textContent = `${message.username}: ${message.text}`;
           chatMessages.appendChild(messageElement);
-        });
+        }
       })
       .catch(error => console.error('Error fetching messages:', error));
     }
@@ -60,26 +60,64 @@
 
       if (messageText) {
         // Send the message to the server
-        fetch("http://127.0.0.1:5000/send_message", {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${authToken}`, // Include the token in the Authorization header
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ text: messageText })
+        const formData = new FormData();
+        formData.append('chatroomid', localStorage.getItem('chatroomid'));
+        formData.append('userid', localStorage.getItem('userid'));
+        formData.append('message', messageText);
+        fetch("http://127.0.0.1:5000/messages_send", {
+            method: 'POST',
+            body: formData
         })
         .then(response => response.json())
         .then(data => {
           console.log(data); // Log server response
           messageInput.value = ""; // Clear input field after sending
-          fetchChatMessages(); // Fetch updated chat messages
         })
         .catch(error => console.error('Error sending message:', error));
       }
     });
 
-    // Initial fetch of chat messages
-    fetchChatMessages();
+    window.onload = function() {
+      populateMessage();
+    };
+
+    // window.addEventListener('beforeunload', function(event) {
+    //   // Check if each item exists in localStorage before removing it
+    //   if (localStorage.getItem('userid')) {
+    //       localStorage.removeItem('userid');
+    //   }
+    //   if (localStorage.getItem('email')) {
+    //       localStorage.removeItem('email');
+    //   }
+    //   if (localStorage.getItem('username')) {
+    //       localStorage.removeItem('username');
+    //   }
+    //   if (localStorage.getItem('bio')) {
+    //       localStorage.removeItem('bio');
+    //   }
+    //   if (localStorage.getItem('chatroomid')){
+    //     localStorage.removeItem('chatroomid');
+    //   }
+    // });
   </script>
+  <!-- Websocket script -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.0/socket.io.js"></script>
+  <script>
+      const socket = io('http://127.0.0.1:5000');
+
+      socket.on('connect', () => {
+          console.log('Connected to server');
+      });
+
+      // HACK SOLUTION SHOULD REALLY ONLY CREATE A SINGLE NEW MESSAGE      
+      socket.on('message_new', (chatroomid) => {
+        if(chatroomid = localStorage.getItem('chatroomid')){
+          populateMessage();
+        }
+      });
+  </script>
+
+
+
 </body>
 </html>
