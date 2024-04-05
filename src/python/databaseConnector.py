@@ -109,7 +109,7 @@ def messages_list():
     return jsonify({"success": formatted_messages})  # Placeholder response
 
 
-
+# Socket message on connect
 @socketio.on('connect')
 def handle_connect():
     print('Client connected')
