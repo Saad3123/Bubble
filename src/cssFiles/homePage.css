@@ -83,3 +83,41 @@ button.delete {
   border-radius: 5px;
   cursor: pointer;
 }
+
+.navbar {
+  overflow: hidden;
+  background-color: #333; /* Dark background color */
+}
+
+/* Links inside the navigation bar */
+.navbar a {
+  float: right;
+  display: block;
+  color: #f2f2f2; /* Light text color */
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* Change background color of links on hover */
+.navbar a:hover {
+  background-color: #ddd; /* Light background color on hover */
+  color: black; /* Dark text color on hover */
+}
+
+/* Style for the logout button */
+.logout-btn {
+  float: left;
+  display: block;
+  color: #f2f2f2; /* Light text color */
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  background-color: #333; /* Dark background color */
+}
+
+/* Change background color of logout button on hover */
+.logout-btn:hover {
+  background-color: #ddd; /* Light background color on hover */
+  color: black; /* Dark text color on hover */
+}

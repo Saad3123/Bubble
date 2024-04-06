@@ -4,7 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="../cssFiles/chatroom.css">
-
+  <style>
+    /* Styles for the back button */
+    .back-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: #333;
+      color: #fff;
+      padding: 5px 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
   <title>Chatroom</title>
 </head>
 <body>
@@ -20,6 +33,9 @@
       <button type="submit">Send</button>
     </form>
   </div>
+
+  <!-- Back button -->
+  <button class="back-button" onclick="goBack()">Back</button>
 
   <!-- JS -->
   <script>
@@ -40,13 +56,13 @@
         const chatMessages = document.getElementById("chatMessages");
         chatMessages.innerHTML = ""; // Clear previous messages
 
-        for (let i = 0; i < messagesFromDB.length; i++) {
-          message = messagesFromDB[i];
-          console.log(message);
+        // Reverse the order of messages before adding them to the container
+        messagesFromDB.reverse().forEach(message => {
           const messageElement = document.createElement("div");
+          messageElement.classList.add("message-container");
           messageElement.textContent = `${message.username}: ${message.text}`;
           chatMessages.appendChild(messageElement);
-        }
+        });
       })
       .catch(error => console.error('Error fetching messages:', error));
     }
@@ -76,6 +92,11 @@
         .catch(error => console.error('Error sending message:', error));
       }
     });
+
+    // Function to go back to homepage
+    function goBack() {
+      window.location.href = "homePage.html";
+    }
 
     window.onload = function() {
       populateMessage();
@@ -116,8 +137,5 @@
         }
       });
   </script>
-
-
-
 </body>
 </html>

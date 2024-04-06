@@ -12,9 +12,14 @@
   <title>Room Management</title>
 </head>
   <body>
+    <div class="navbar">
+      <a href="#">Home</a>
+      <a href="#">About</a>
+      <a href="#">Contact</a>
+      <a class="logout-btn" onclick="logout()">Logout</a>
+    </div>
     <div class="content">
       <h1>Room Management</h1>
-      <header>Available Rooms</header>    
       <table id="roomTable">
         <thead>
           <tr>
@@ -190,6 +195,16 @@
     //     localStorage.removeItem('chatroomid');
     //   }
     // });
+    function logout() {
+    // Clear the localStorage items
+    localStorage.removeItem('userid');
+    localStorage.removeItem('email');
+    localStorage.removeItem('username');
+    localStorage.removeItem('bio');
+    localStorage.removeItem('chatroomid');
 
+    // Redirect to the login page or any other desired location
+    window.location.href = "index.html"; // Change "login.html" to your login page URL
+  }
   </script>
 </html>
