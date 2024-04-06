@@ -60,7 +60,13 @@
         messagesFromDB.reverse().forEach(message => {
           const messageElement = document.createElement("div");
           messageElement.classList.add("message-container");
-          messageElement.textContent = `${message.username}: ${message.text}`;
+          if (message.userid == localStorage.getItem('userid')) {
+            messageElement.classList.add("message-right");
+            messageElement.innerHTML = `<span class="bold-name">${message.username}</span>: ${message.text}`;
+          } else {
+            messageElement.classList.add("message-left");
+            messageElement.innerHTML = `<span class="bold-name">${message.username}</span>: ${message.text}`;
+          }
           chatMessages.appendChild(messageElement);
         });
       })

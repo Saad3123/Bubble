@@ -1,7 +1,7 @@
 /* General styles */
 body {
   font-family: Arial, sans-serif;
-  background-image: url('/img/chatroomBG.jpg');
+  background-image: url('/src/img/chatroomBG.jpg');
   background-size: cover; /* Cover the entire background */
   background-repeat: no-repeat; /* Prevent background image from repeating */
   margin: 0;
@@ -28,10 +28,32 @@ h1 {
 }
 
 .message-container {
-  background-color: #f0f0f0;
-  border-radius: 5px;
-  padding: 5px;
   margin-bottom: 5px;
+  clear: both;
+  overflow: auto;
+}
+
+/* Styles for your messages */
+.message-right {
+  float: right;
+  background-color: #99ddff; /* Light blue background for your messages */
+  border-radius: 10px;
+  padding: 5px 10px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.message-left {
+  float: left;
+  background-color: #e0e0e0; /* Light gray background for others' messages */
+  border-radius: 10px;
+  padding: 5px 10px;
+  max-width: 70%;
+  word-wrap: break-word;
+}
+
+.bold-name {
+  font-weight: bold;
 }
 
 .chatroom-container .message-container:nth-child(even) {
@@ -59,6 +81,7 @@ h1 {
   cursor: pointer;
   border-radius: 5px;
 }
+
 .back-button {
   position: absolute;
   top: 10px;

@@ -12,7 +12,7 @@ body {
   font-family: 'Poppins', sans-serif; /* Set Poppins as the font for the body */
   margin: 0;
   padding: 0;
-  background-image: url('../../img/loginWallpaper.jpg');
+  background-image: url('../img/loginWallpaper.jpg');
   background-size: cover;
 }
 

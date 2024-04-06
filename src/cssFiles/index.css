@@ -8,7 +8,7 @@
 }
 
 .bg-img {
-  background: url('../../img/loginWallpaper.jpg');
+  background: url('../img/loginWallpaper.jpg');
   height: 100vh;
   background-size: cover;
   background-position: center;
