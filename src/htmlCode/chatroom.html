@@ -29,7 +29,9 @@
     }
 
     #chatMessages {
-      margin-top: 20px; /* Add margin to position below the message form */
+      margin-top: 20px; 
+      max-height: 300px; 
+      overflow-y: auto; 
     }
     .popup-content {
       position: absolute;
@@ -48,15 +50,13 @@
 <body>
   <div class="content">
     <h1>Welcome to the Chatroom</h1>
-    <header>Chat Messages</header>    
+    <div id="chatMessages">
+      <!-- Chat messages will be displayed here -->
+    </div>
     <form id="messageForm">
       <input type="text" id="messageInput" placeholder="Type your message...">
       <button type="submit">Send</button>
     </form>
-    
-    <div id="chatMessages">
-      <!-- Chat messages will be displayed here -->
-    </div>
   </div>
 
   <!-- Back button -->
@@ -71,59 +71,65 @@
     </div>
   </div>
 
+
   <!-- JS -->
   <script>
     console.log(localStorage.getItem('userid'));
 
     // Function to fetch and display chat messages
-    function populateMessage() {
-      const formData = new FormData();
-      formData.append('chatroomid', localStorage.getItem('chatroomid'));
-      // Fetch chat messages from the server
-      fetch("http://127.0.0.1:5000/messages_list", {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-        messagesFromDB = data.success;
-        const chatMessages = document.getElementById("chatMessages");
-        chatMessages.innerHTML = ""; // Clear previous messages
+// Function to fetch and display chat messages in descending order
+function populateMessage() {
+  const formData = new FormData();
+  formData.append('chatroomid', localStorage.getItem('chatroomid'));
+  // Fetch chat messages from the server
+  fetch("http://127.0.0.1:5000/messages_list", {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    messagesFromDB = data.success;
+    const chatMessages = document.getElementById("chatMessages");
+    chatMessages.innerHTML = ""; // Clear previous messages
 
-        // Don't want reversed looks better forward
-        messagesFromDB.forEach(message => {
-          const messageElement = document.createElement("div");
-          messageElement.classList.add("message-container");
-          messageElement.setAttribute("data-message-id", message.messageid); // Set message ID
-          messageElement.setAttribute("data-user-id", message.userid);
-          
-          if (message.userid == localStorage.getItem('userid')) {
-            messageElement.classList.add("message-right");
-          } else {
-            messageElement.classList.add("message-left");
-          }
-          
-          // Display message content
-          messageElement.innerHTML = `<span class="bold-name">${message.username}:</span><span name="textcontent"> ${message.text}</span>`;
-          
-          // Attach click event listener to each message element if it's the current user's message
-          if (message.userid == localStorage.getItem('userid')) {
-            messageElement.addEventListener("click", function(event) {
-              const popup = document.getElementById("popup");
-              popup.style.display = "block";
+    // Display messages in descending order
+    for (let i = messagesFromDB.length - 1; i >= 0; i--) {
+      const message = messagesFromDB[i];
+      const messageElement = document.createElement("div");
+      messageElement.classList.add("message-container");
+      messageElement.setAttribute("data-message-id", message.messageid); // Set message ID
+      messageElement.setAttribute("data-user-id", message.userid);
+      
+      if (message.userid == localStorage.getItem('userid')) {
+        messageElement.classList.add("message-right");
+      } else {
+        messageElement.classList.add("message-left");
+      }
+      
+      // Display message content
+      messageElement.innerHTML = `<span class="bold-name">${message.username}:</span><span name="textcontent"> ${message.text}</span>`;
+      
+      // Attach click event listener to each message element if it's the current user's message
+      if (message.userid == localStorage.getItem('userid')) {
+        messageElement.addEventListener("click", function(event) {
+          const popup = document.getElementById("popup");
+          popup.style.display = "block";
 
-              // Pass message ID to the buttons
-              const messageid = messageElement.getAttribute("data-message-id");
-              document.getElementById("editButton").setAttribute("data-message-id", messageid);
-              document.getElementById("deleteButton").setAttribute("data-message-id", messageid);
-            });
-          }
-
-          chatMessages.appendChild(messageElement);
+          // Pass message ID to the buttons
+          const messageid = messageElement.getAttribute("data-message-id");
+          document.getElementById("editButton").setAttribute("data-message-id", messageid);
+          document.getElementById("deleteButton").setAttribute("data-message-id", messageid);
         });
-      })
-      .catch(error => console.error('Error fetching messages:', error));
+      }
+
+      chatMessages.appendChild(messageElement);
     }
+    // Scroll to the bottom of the chat messages
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  })
+  .catch(error => console.error('Error fetching messages:', error));
+}
+
 
     // Event listener for message form submission
     document.getElementById("messageForm").addEventListener("submit", function(event) {
