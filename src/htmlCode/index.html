@@ -32,7 +32,7 @@
 
            <div class="signup">
                Don't have an account?
-               <a href="./signUp.html">Signup Now</a>
+               <a href="./signUp.html" id="createAccount">Signup Now</a>
            </div>
        </div>
    </div>
@@ -107,6 +107,7 @@
                     localStorage.setItem('email', results.email);
                     localStorage.setItem('username', results.username);
                     localStorage.setItem('bio', results.bio);
+                    const pageChange = true;
                     window.location.href = "homePage.html";
                 } else {
                     alert('Failed to retrieve user data!');
@@ -116,27 +117,6 @@
                 console.error('Error:', error);
             });
         }
-
-
-        // window.addEventListener('beforeunload', function(event) {
-        //     // Check if each item exists in localStorage before removing it
-        //     if (localStorage.getItem('userid')) {
-        //         localStorage.removeItem('userid');
-        //     }
-        //     if (localStorage.getItem('email')) {
-        //         localStorage.removeItem('email');
-        //     }
-        //     if (localStorage.getItem('username')) {
-        //         localStorage.removeItem('username');
-        //     }
-        //     if (localStorage.getItem('bio')) {
-        //         localStorage.removeItem('bio');
-        //     }
-        //     if (localStorage.getItem('chatroomid')){
-        //         localStorage.removeItem('chatroomid');
-        //     }
-        // });
-
    </script>
 </body>
 </html>
