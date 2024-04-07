@@ -101,6 +101,9 @@
 
     // Function to go back to homepage
     function goBack() {
+      if(localStorage.getItem('chatroomid')){
+        localStorage.removeItem('chatroomid');
+      }
       window.location.href = "homePage.html";
     }
 
