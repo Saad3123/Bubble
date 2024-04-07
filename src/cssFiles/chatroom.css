@@ -2,8 +2,8 @@
 body {
   font-family: Arial, sans-serif;
   background-image: url('../img/chatroomBG.jpg');
-  background-size: cover; /* Cover the entire background */
-  background-repeat: no-repeat; /* Prevent background image from repeating */
+  background-size: cover;
+  background-repeat: no-repeat;
   margin: 0;
   padding: 0;
 }
@@ -12,6 +12,7 @@ body {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
+  text-align: center; /* Center align content */
 }
 
 h1 {
@@ -24,7 +25,7 @@ h1 {
   border-radius: 5px;
   padding: 10px;
   overflow-y: auto;
-  max-height: 400px; /* Adjust max-height as needed */
+  max-height: 400px;
 }
 
 .message-container {
@@ -36,7 +37,7 @@ h1 {
 /* Styles for your messages */
 .message-right {
   float: right;
-  background-color: #99ddff; /* Light blue background for your messages */
+  background-color: #99ddff;
   border-radius: 10px;
   padding: 5px 10px;
   max-width: 70%;
@@ -45,7 +46,7 @@ h1 {
 
 .message-left {
   float: left;
-  background-color: #e0e0e0; /* Light gray background for others' messages */
+  background-color: #e0e0e0;
   border-radius: 10px;
   padding: 5px 10px;
   max-width: 70%;
@@ -57,16 +58,18 @@ h1 {
 }
 
 .chatroom-container .message-container:nth-child(even) {
-  background-color: #eaeaea; /* Alternate background color for even messages */
+  background-color: #eaeaea;
 }
 
 /* Message input styles */
 #messageForm {
   margin-top: 10px;
+  display: flex; /* Use flexbox for layout */
+  align-items: center; /* Center align items vertically */
 }
 
 #messageInput {
-  width: calc(100% - 70px); /* Adjust width as needed */
+  flex: 1; /* Take remaining space */
   padding: 5px;
   border: 1px solid #ccc;
   border-radius: 5px;

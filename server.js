@@ -17,6 +17,10 @@ app.get('/', (req, res) => {
 app.get('/chatroom', (req, res) => {
   res.sendFile(path.join(__dirname, 'src', 'htmlCode', 'chatroom.html'));
 });
+
+app.get('/index', (req, res) => {
+  res.sendFile(path.join(__dirname, 'src', 'htmlCode', 'index.html'));
+});
 app.get('/homePage', (req, res) => {
   res.sendFile(path.join(__dirname, 'src', 'htmlCode', 'homePage.html'));
 });
