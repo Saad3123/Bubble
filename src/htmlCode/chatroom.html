@@ -192,76 +192,76 @@
       document.getElementById("popup").style.display = "none";
     });
 
-// Edit message function
-document.getElementById("editButton").addEventListener("click", function(event) {
-  const popup = document.getElementById("popup");
+    // Edit message function
+    document.getElementById("editButton").addEventListener("click", function(event) {
+      const popup = document.getElementById("popup");
 
-  // Close the popup window
-  popup.style.display = "none";
+      // Close the popup window
+      popup.style.display = "none";
 
-  const messageid = event.target.getAttribute("data-message-id");
-  const messageElement = document.querySelector(`[data-message-id="${messageid}"]`);
-  const textContentElement = messageElement.querySelector('[name="textcontent"]');
+      const messageid = event.target.getAttribute("data-message-id");
+      const messageElement = document.querySelector(`[data-message-id="${messageid}"]`);
+      const textContentElement = messageElement.querySelector('[name="textcontent"]');
 
-  // Store the original message text
-  const originalMessage = textContentElement.textContent.trim();
+      // Store the original message text
+      const originalMessage = textContentElement.textContent.trim();
 
-  // Create an input field for editing the message text
-  const editInput = document.createElement("input");
-  editInput.type = "text";
-  editInput.value = originalMessage;
-  editInput.classList.add("edit-input");
+      // Create an input field for editing the message text
+      const editInput = document.createElement("input");
+      editInput.type = "text";
+      editInput.value = originalMessage;
+      editInput.classList.add("edit-input");
 
-  // Replace the message text with the input field
-  messageElement.replaceChild(editInput, textContentElement);
-  editInput.focus(); // Focus on the input field for editing
+      // Replace the message text with the input field
+      messageElement.replaceChild(editInput, textContentElement);
+      editInput.focus(); // Focus on the input field for editing
 
-  // Function to handle saving the edited message
-  function saveEditedMessage() {
-    const updatedMessage = editInput.value.trim();
-    // Implement update logic, e.g., send a request to the server to update the message
-    console.log("Update message with ID:", messageid, "New message:", updatedMessage);
+      // Function to handle saving the edited message
+      function saveEditedMessage() {
+        const updatedMessage = editInput.value.trim();
+        // Implement update logic, e.g., send a request to the server to update the message
+        console.log("Update message with ID:", messageid, "New message:", updatedMessage);
 
-    // Replace the input field with the updated message text
-    const updatedTextContent = document.createElement("span");
-    updatedTextContent.setAttribute("name", "textcontent");
-    updatedTextContent.textContent = updatedMessage;
-    messageElement.replaceChild(updatedTextContent, editInput);
-  
-    const formData = new FormData();
-    formData.append('userid', localStorage.getItem('userid'));
-    formData.append('messageid', messageid);
-    formData.append('updatedmessage', updatedMessage);
-    console.log(updatedMessage);
-    fetch("http://127.0.0.1:5000/messages_edit", {
-          method: 'POST',
-          body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-        console.log(data); // Log server response
-        updateChatroom(localStorage.getItem('chatroomid'), 'message updated');
-      })
-      .catch(error => console.error('Error updating message:', error));
-    
-  }
+        // Replace the input field with the updated message text
+        const updatedTextContent = document.createElement("span");
+        updatedTextContent.setAttribute("name", "textcontent");
+        updatedTextContent.textContent = updatedMessage;
+        messageElement.replaceChild(updatedTextContent, editInput);
+      
+        const formData = new FormData();
+        formData.append('userid', localStorage.getItem('userid'));
+        formData.append('messageid', messageid);
+        formData.append('updatedmessage', updatedMessage);
+        console.log(updatedMessage);
+        fetch("http://127.0.0.1:5000/messages_edit", {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log(data); // Log server response
+            updateChatroom(localStorage.getItem('chatroomid'), 'message updated');
+          })
+          .catch(error => console.error('Error updating message:', error));
+        
+      }
 
-  // Handle saving the edited message when pressing the Enter key
-  function handleKeyPress(event) {
-    if (event.key === "Enter") {
-      saveEditedMessage();
-    }
-  }
-  let clickCount = 0;
-  editInput.addEventListener("keypress", handleKeyPress);
-  function handleClick(event) {
-    clickCount++;
-    if (!editInput.contains(event.target) && clickCount == 2) {
-      saveEditedMessage();
-    }
-  }
-  document.addEventListener("click", handleClick);
-});
+      // Handle saving the edited message when pressing the Enter key
+      function handleKeyPress(event) {
+        if (event.key === "Enter") {
+          saveEditedMessage();
+        }
+      }
+      let clickCount = 0;
+      editInput.addEventListener("keypress", handleKeyPress);
+      function handleClick(event) {
+        clickCount++;
+        if (!editInput.contains(event.target) && clickCount == 2) {
+          saveEditedMessage();
+        }
+      }
+      document.addEventListener("click", handleClick);
+    });
 
     window.onload = function() {
       populateMessage();
