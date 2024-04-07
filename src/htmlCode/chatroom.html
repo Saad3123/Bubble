@@ -252,7 +252,15 @@ document.getElementById("editButton").addEventListener("click", function(event) 
       saveEditedMessage();
     }
   }
+  let clickCount = 0;
   editInput.addEventListener("keypress", handleKeyPress);
+  function handleClick(event) {
+    clickCount++;
+    if (!editInput.contains(event.target) && clickCount == 2) {
+      saveEditedMessage();
+    }
+  }
+  document.addEventListener("click", handleClick);
 });
 
     window.onload = function() {
