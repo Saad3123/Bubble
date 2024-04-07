@@ -28,6 +28,9 @@
       z-index: 9999;
     }
 
+    #chatMessages {
+      margin-top: 20px; /* Add margin to position below the message form */
+    }
     .popup-content {
       position: absolute;
       top: 50%;
@@ -46,14 +49,14 @@
   <div class="content">
     <h1>Welcome to the Chatroom</h1>
     <header>Chat Messages</header>    
-    <div id="chatMessages">
-      <!-- Chat messages will be displayed here -->
-    </div>
-
     <form id="messageForm">
       <input type="text" id="messageInput" placeholder="Type your message...">
       <button type="submit">Send</button>
     </form>
+    
+    <div id="chatMessages">
+      <!-- Chat messages will be displayed here -->
+    </div>
   </div>
 
   <!-- Back button -->
