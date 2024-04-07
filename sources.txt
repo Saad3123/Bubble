@@ -5,3 +5,7 @@
     "ssh -N -L 3306:dolphin.csci.viu.ca:3306 studentaccount@otter.csci.viu.ca" in P 3306
 2. use "go live" to host in P 5500
 3. "python src/python/databaseConnector.py" to connect to db in P 5000
+
+how to kill port
+lsof -ti :PORT_NUMBER
+kill pid

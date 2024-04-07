@@ -5,7 +5,7 @@
    <title>Login Page</title>
    <link rel="stylesheet" href="../cssFiles/index.css">
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
-   <link rel="shortcut icon" href="/img/logo.jpg" type="image/x-icon">
+   <link rel="shortcut icon" href="../img/logo.jpg" type="image/x-icon">
 </head>
 
 <body>
@@ -107,8 +107,7 @@
                     localStorage.setItem('email', results.email);
                     localStorage.setItem('username', results.username);
                     localStorage.setItem('bio', results.bio);
-                    const pageChange = true;
-                    window.location.href = "homePage.html";
+                    window.location.href = "/homePage";
                 } else {
                     alert('Failed to retrieve user data!');
                 }
