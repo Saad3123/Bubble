@@ -1,12 +1,13 @@
 from flask import Flask, send_from_directory, request, jsonify
 from flask_cors import CORS
-from flask_socketio import SocketIO, emit
+import threading
+from flask_socketio import SocketIO, emit, join_room, leave_room
 
 from databaseclass import DatabaseConnector
 
 app = Flask(__name__)
-CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="http://127.0.0.1:5500")
+CORS(app, origins=["http://localhost:3002", "http://127.0.0.1:3002"])
+socketio = SocketIO(app, cors_allowed_origins=["http://localhost:3002", "http://127.0.0.1:3002"])
 
 # Initialize your DatabaseConnector
 db_connector = DatabaseConnector(
@@ -16,6 +17,28 @@ db_connector = DatabaseConnector(
     database='csci375team2_testdb_bubble'
 )
 db_connector.connect()
+
+# Define a lock object to synchronize database access
+db_lock = threading.Lock()
+
+# Wrap database calls with the lock to ensure they are executed sequentially
+def synchronized_database_call(func):
+    def synchronized_call(*args, **kwargs):
+        with db_lock:
+            return func(*args, **kwargs)
+    return synchronized_call
+
+# Apply the synchronized_database_call decorator to database-related routes
+db_connector.user_login = synchronized_database_call(db_connector.user_login)
+db_connector.user_register = synchronized_database_call(db_connector.user_register)
+db_connector.user_return_info = synchronized_database_call(db_connector.user_return_info)
+db_connector.chatrooms_list = synchronized_database_call(db_connector.chatrooms_list)
+db_connector.chatrooms_delete = synchronized_database_call(db_connector.chatrooms_delete)
+db_connector.chatrooms_create = synchronized_database_call(db_connector.chatrooms_create)
+db_connector.chatrooms_password_status = synchronized_database_call(db_connector.chatrooms_password_status)
+db_connector.chatrooms_join = synchronized_database_call(db_connector.chatrooms_join)
+db_connector.messages_send = synchronized_database_call(db_connector.messages_send)
+db_connector.messages_list_in_chatroom = synchronized_database_call(db_connector.messages_list_in_chatroom)
 
 @app.route('/index')
 def login():
@@ -96,10 +119,11 @@ def messages_send():
     chatroomid = request.form.get('chatroomid')
     userid = request.form.get('userid')
     message = request.form.get('message')
-    print(message)
+    
+    # Save the message to the database
     result = db_connector.messages_send(userid, chatroomid, message)
-    socketio.emit('message_new', chatroomid)  # Emitting the message to all connected clients
-    return jsonify({"success": result})  # Placeholder response
+        
+    return jsonify({"success": result})
 
 @app.route('/messages_list', methods=['POST'])
 def messages_list():
@@ -109,10 +133,30 @@ def messages_list():
     return jsonify({"success": formatted_messages})  # Placeholder response
 
 
-# Socket message on connect
 @socketio.on('connect')
 def handle_connect():
     print('Client connected')
 
+# Define a room when a user joins a chatroom
+@socketio.on('join_room')
+def on_join(data):
+    chatroomid = data['chatroomid']
+    join_room(chatroomid)
+    print(f"A user joined chatroom {chatroomid}")
+
+# Define a room when a user leaves a chatroom
+@socketio.on('leave_room')
+def on_leave(data):
+    chatroomid = data['chatroomid']
+    leave_room(chatroomid)
+    print(f"A user left chatroom {chatroomid}")
+
+# Handle sending messages
+@socketio.on('send_message')
+def handle_message(data):
+    print('emit reached?')
+    chatroomid = data['chatroomid']
+    emit('new_message', {'chatroomid': chatroomid}, room=chatroomid)
+
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=True, allow_unsafe_werkzeug=True)

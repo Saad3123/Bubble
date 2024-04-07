@@ -93,6 +93,7 @@
         .then(response => response.json())
         .then(data => {
           console.log(data); // Log server response
+          sendMessage(localStorage.getItem('chatroomid')); //emit message send?
           messageInput.value = ""; // Clear input field after sending
         })
         .catch(error => console.error('Error sending message:', error));
@@ -101,47 +102,54 @@
 
     // Function to go back to homepage
     function goBack() {
-      window.location.href = "homePage.html";
+      if(localStorage.getItem('chatroomid')){
+        localStorage.removeItem('chatroomid');
+      }
+      window.location.href = "homePage";
     }
 
     window.onload = function() {
       populateMessage();
     };
 
-    // window.addEventListener('beforeunload', function(event) {
-    //   // Check if each item exists in localStorage before removing it
-    //   if (localStorage.getItem('userid')) {
-    //       localStorage.removeItem('userid');
-    //   }
-    //   if (localStorage.getItem('email')) {
-    //       localStorage.removeItem('email');
-    //   }
-    //   if (localStorage.getItem('username')) {
-    //       localStorage.removeItem('username');
-    //   }
-    //   if (localStorage.getItem('bio')) {
-    //       localStorage.removeItem('bio');
-    //   }
-    //   if (localStorage.getItem('chatroomid')){
-    //     localStorage.removeItem('chatroomid');
-    //   }
-    // });
+
   </script>
-  <!-- Websocket script -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.0/socket.io.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
   <script>
-      const socket = io('http://127.0.0.1:5000');
+    // Connect to the SocketIO server
+    var socket = io.connect('http://127.0.0.1:5000');
 
-      socket.on('connect', () => {
-          console.log('Connected to server');
-      });
-
-      // HACK SOLUTION SHOULD REALLY ONLY CREATE A SINGLE NEW MESSAGE      
-      socket.on('message_new', (chatroomid) => {
-        if(chatroomid = localStorage.getItem('chatroomid')){
-          populateMessage();
+    // Join the appropriate chatroom upon socket connection
+    socket.on('connect', function() {
+        var chatroomId = localStorage.getItem('chatroomid');
+        if (chatroomId) {
+            socket.emit('join_room', { chatroomid: chatroomId });
+            console.log("Joined chatroom:", chatroomId);
+        } else {
+            console.log("No chatroomid found.");
         }
-      });
+    });
+
+    // Send a message when a user leaves a chatroom
+    function leaveRoom(chatroomid) {
+      console.log('leaving room');
+      socket.emit('leave_room', { chatroomid: chatroomid });
+    }
+
+    // Send a message when a user sends a message
+    function sendMessage(chatroomid) {
+      console.log('sending message');
+      socket.emit('send_message', { chatroomid: chatroomid });
+    }
+
+    // Listen for new messages
+    socket.on('new_message', function(data) {
+      console.log('new message received');
+      if (data.chatroomid == localStorage.getItem('chatroomid')) {
+          // If the new message is for the currently viewed chatroom, update the chat messages
+          populateMessage();
+      }
+    });
   </script>
 </body>
 </html>
