@@ -1,7 +1,7 @@
 /* General styles */
 body {
   font-family: Arial, sans-serif;
-  background-image: url('/src/img/chatroomBG.jpg');
+  background-image: url('../img/chatroomBG.jpg');
   background-size: cover; /* Cover the entire background */
   background-repeat: no-repeat; /* Prevent background image from repeating */
   margin: 0;

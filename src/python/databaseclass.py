@@ -416,12 +416,17 @@ class DatabaseConnector:
             - returns false otherwise
     """
     def messages_list_in_chatroom(self, chatroomid, limit=None):
-        query = "SELECT messageid,USERS.userid,username,time,message FROM MESSAGES JOIN USERS WHERE chatroomid = %s AND USERS.userid = MESSAGES.userid ORDER BY time DESC"
+        query = """
+            SELECT M.messageid, U.userid, U.username, M.time, M.message 
+            FROM MESSAGES M 
+            JOIN USERS U ON M.userid = U.userid 
+            WHERE M.chatroomid = %s 
+            ORDER BY M.time DESC
+        """
+        values = (chatroomid,)  # Tuple with one element
         if limit is not None:
             query += " LIMIT %s"
-            values = (chatroomid, limit)
-        else:
-            values = (chatroomid,)
+            values += (limit,)  # Adding limit parameter to the tuple
 
         try:
             self.cursor.execute(query, values)
