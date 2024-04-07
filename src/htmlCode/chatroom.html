@@ -56,6 +56,9 @@
     </form>
   </div>
 
+  <!-- Back button -->
+  <button class="back-button" onclick="goBack()">Back</button>
+
   <!-- popup for edit and delete -->
   <div id="popup" class="popup">
     <div class="popup-content">
@@ -64,9 +67,6 @@
       <button id="deleteButton">Delete</button>
     </div>
   </div>
-
-  <!-- Back button -->
-  <button class="back-button" onclick="goBack()">Back</button>
 
   <!-- JS -->
   <script>
@@ -87,8 +87,8 @@
         const chatMessages = document.getElementById("chatMessages");
         chatMessages.innerHTML = ""; // Clear previous messages
 
-        // Reverse the order of messages before adding them to the container
-        messagesFromDB.reverse().forEach(message => {
+        // Don't want reversed looks better forward
+        messagesFromDB.forEach(message => {
           const messageElement = document.createElement("div");
           messageElement.classList.add("message-container");
           messageElement.setAttribute("data-message-id", message.messageid); // Set message ID
