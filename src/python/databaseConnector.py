@@ -132,6 +132,20 @@ def messages_list():
     formatted_messages = [{'messageid': message[0], 'userid': message[1], 'username': message[2], 'time': message[3], 'text': message[4]} for message in result]
     return jsonify({"success": formatted_messages})  # Placeholder response
 
+@app.route('/messages_delete', methods=['POST'])
+def messages_delete():
+    messageid = request.form.get('messageid')
+    userid = request.form.get('userid')
+    result = db_connector.messages_delete(userid, messageid)
+    return jsonify({"success": result})  # Placeholder response
+
+@app.route('/messages_edit', methods=['POST'])
+def messages_edit():
+    userid = request.form.get('userid')
+    messageid = request.form.get('messageid')
+    updatedMessage = request.form.get('updatedmessage')
+    result = db_connector.messages_edit(userid, messageid, updatedMessage)
+    return jsonify({"success": result})  # Placeholder response
 
 @socketio.on('connect')
 def handle_connect():
@@ -152,11 +166,11 @@ def on_leave(data):
     print(f"A user left chatroom {chatroomid}")
 
 # Handle sending messages
-@socketio.on('send_message')
+@socketio.on('server_update_chatroom')
 def handle_message(data):
     print('emit reached?')
     chatroomid = data['chatroomid']
-    emit('new_message', {'chatroomid': chatroomid}, room=chatroomid)
+    emit('client_update_chatroom', {'chatroomid': chatroomid}, room=chatroomid)
 
 if __name__ == '__main__':
     socketio.run(app, debug=True, allow_unsafe_werkzeug=True)

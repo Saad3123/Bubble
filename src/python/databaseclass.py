@@ -347,19 +347,18 @@ class DatabaseConnector:
     """
         @var
             userid     - (string) user that is trying to delete the message
-            chatroomid - (string) chatroom the message is in
             messageid  - (string) messageid of the messaage to be deleted
         @return
             - returns true if message successfully deleted
             - returns false otherwise
     """
-    def messages_delete(self, userid, chatroomid, messageid):
-        query = "DELETE FROM MESSAGES WHERE chatroomid = %s AND userid = %s AND messageid = %s"
-        values = (chatroomid, userid, messageid)
+    def messages_delete(self, userid, messageid):
+        query = "DELETE FROM MESSAGES WHERE userid = %s AND messageid = %s"
+        values = (userid, messageid)
         try:
             # Check if the user attempting to delete the message is the same as the one who sent it
-            check_query = "SELECT * FROM MESSAGES WHERE chatroomid = %s AND userid = %s AND messageid = %s"
-            check_values = (chatroomid, userid, messageid)
+            check_query = "SELECT * FROM MESSAGES WHERE userid = %s AND messageid = %s"
+            check_values = (userid, messageid)
             self.cursor.execute(check_query, check_values)
             existing_message = self.cursor.fetchone()
             if not existing_message:
@@ -378,19 +377,19 @@ class DatabaseConnector:
     """
         @var
             userid      - (string) user that is trying to edit the message
-            chatroomid  - (string) chatroom the message is in
+            messageid   - (string) message to update
             new_message - (string) new message string
         @return
             - returns true if message successfully deleted
             - returns false otherwise
     """
-    def messages_edit(self, userid, chatroomid, messageid, new_message):
-        query = "UPDATE MESSAGES SET message = %s WHERE chatroomid = %s AND userid = %s AND messageid = %s"
-        values = (new_message, chatroomid, userid, messageid)
+    def messages_edit(self, userid, messageid, new_message):
+        query = "UPDATE MESSAGES SET message = %s WHERE userid = %s AND messageid = %s"
+        values = (new_message, userid, messageid)
         try:
             # Check if the user attempting to edit the message is the same as the one who sent it
-            check_query = "SELECT * FROM MESSAGES WHERE chatroomid = %s AND userid = %s AND messageid = %s"
-            check_values = (chatroomid, userid, messageid)
+            check_query = "SELECT * FROM MESSAGES WHERE userid = %s AND messageid = %s"
+            check_values = (userid, messageid)
             self.cursor.execute(check_query, check_values)
             existing_message = self.cursor.fetchone()
             if not existing_message:

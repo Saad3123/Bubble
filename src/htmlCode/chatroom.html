@@ -17,13 +17,31 @@
       border-radius: 5px;
       cursor: pointer;
     }
-
-    /* Styles for the messages container */
-    #messagesContainer {
-      max-height: 400px; /* Set a maximum height for scrolling */
-      overflow-y: auto; /* Enable vertical scrolling */
-      margin-bottom: 20px; /* Add margin at the bottom */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 9999;
     }
+
+    #chatMessages {
+      margin-top: 20px; /* Add margin to position below the message form */
+    }
+    .popup-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+
   </style>
   <title>Chatroom</title>
 </head>
@@ -31,18 +49,27 @@
   <div class="content">
     <h1>Welcome to the Chatroom</h1>
     <header>Chat Messages</header>    
-    <div id="messagesContainer">
-      <!-- Chat messages will be displayed here -->
-    </div>
-
     <form id="messageForm">
       <input type="text" id="messageInput" placeholder="Type your message...">
       <button type="submit">Send</button>
     </form>
+    
+    <div id="chatMessages">
+      <!-- Chat messages will be displayed here -->
+    </div>
   </div>
 
   <!-- Back button -->
   <button class="back-button" onclick="goBack()">Back</button>
+
+  <!-- popup for edit and delete -->
+  <div id="popup" class="popup">
+    <div class="popup-content">
+      <button id="exitButton">Exit</button>
+      <button id="editButton">Edit</button>
+      <button id="deleteButton">Delete</button>
+    </div>
+  </div>
 
   <!-- JS -->
   <script>
@@ -54,27 +81,45 @@
       formData.append('chatroomid', localStorage.getItem('chatroomid'));
       // Fetch chat messages from the server
       fetch("http://127.0.0.1:5000/messages_list", {
-            method: 'POST',
-            body: formData
-        })
+        method: 'POST',
+        body: formData
+      })
       .then(response => response.json())
       .then(data => {
         messagesFromDB = data.success;
-        const messagesContainer = document.getElementById("messagesContainer");
-        messagesContainer.innerHTML = ""; // Clear previous messages
+        const chatMessages = document.getElementById("chatMessages");
+        chatMessages.innerHTML = ""; // Clear previous messages
 
-        // Reverse the order of messages before adding them to the container
-        messagesFromDB.reverse().forEach(message => {
+        // Don't want reversed looks better forward
+        messagesFromDB.forEach(message => {
           const messageElement = document.createElement("div");
           messageElement.classList.add("message-container");
+          messageElement.setAttribute("data-message-id", message.messageid); // Set message ID
+          messageElement.setAttribute("data-user-id", message.userid);
+          
           if (message.userid == localStorage.getItem('userid')) {
             messageElement.classList.add("message-right");
-            messageElement.innerHTML = `<span class="bold-name">${message.username}</span>: ${message.text}`;
           } else {
             messageElement.classList.add("message-left");
-            messageElement.innerHTML = `<span class="bold-name">${message.username}</span>: ${message.text}`;
           }
-          messagesContainer.appendChild(messageElement);
+          
+          // Display message content
+          messageElement.innerHTML = `<span class="bold-name">${message.username}:</span><span name="textcontent"> ${message.text}</span>`;
+          
+          // Attach click event listener to each message element if it's the current user's message
+          if (message.userid == localStorage.getItem('userid')) {
+            messageElement.addEventListener("click", function(event) {
+              const popup = document.getElementById("popup");
+              popup.style.display = "block";
+
+              // Pass message ID to the buttons
+              const messageid = messageElement.getAttribute("data-message-id");
+              document.getElementById("editButton").setAttribute("data-message-id", messageid);
+              document.getElementById("deleteButton").setAttribute("data-message-id", messageid);
+            });
+          }
+
+          chatMessages.appendChild(messageElement);
         });
       })
       .catch(error => console.error('Error fetching messages:', error));
@@ -100,7 +145,7 @@
         .then(response => response.json())
         .then(data => {
           console.log(data); // Log server response
-          sendMessage(localStorage.getItem('chatroomid')); //emit message send?
+          updateChatroom(localStorage.getItem('chatroomid'), 'sending message'); //emit message send?
           messageInput.value = ""; // Clear input field after sending
         })
         .catch(error => console.error('Error sending message:', error));
@@ -115,10 +160,115 @@
       window.location.href = "homePage";
     }
 
+    // Close popup when clicking outside of it or clicking the exit button
+    window.addEventListener("click", function(event) {
+      const popup = document.getElementById("popup");
+      if (event.target === popup || event.target.id === "exitButton") {
+        popup.style.display = "none";
+      }
+    });
+
+    // Delete message function
+    document.getElementById("deleteButton").addEventListener("click", function(event) {
+      const messageid = event.target.getAttribute("data-message-id");
+      // Implement deletion logic, e.g., send a request to the server to delete the message
+      console.log("Delete message with ID:", messageid);
+
+      //code to delete message goes here
+      const formData = new FormData();
+      formData.append('messageid', messageid);
+      formData.append('userid', localStorage.getItem('userid'));
+      console.log(messageid);
+      console.log(localStorage.getItem('userid'));
+      fetch("http://127.0.0.1:5000/messages_delete", {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data); // Log server response
+        updateChatroom(localStorage.getItem('chatroomid'), 'message deleted');
+      })
+      .catch(error => console.error('Error deleting message:', error));
+
+      // Close after delete
+      document.getElementById("popup").style.display = "none";
+    });
+
+    // Edit message function
+    document.getElementById("editButton").addEventListener("click", function(event) {
+      const popup = document.getElementById("popup");
+
+      // Close the popup window
+      popup.style.display = "none";
+
+      const messageid = event.target.getAttribute("data-message-id");
+      const messageElement = document.querySelector(`[data-message-id="${messageid}"]`);
+      const textContentElement = messageElement.querySelector('[name="textcontent"]');
+
+      // Store the original message text
+      const originalMessage = textContentElement.textContent.trim();
+
+      // Create an input field for editing the message text
+      const editInput = document.createElement("input");
+      editInput.type = "text";
+      editInput.value = originalMessage;
+      editInput.classList.add("edit-input");
+
+      // Replace the message text with the input field
+      messageElement.replaceChild(editInput, textContentElement);
+      editInput.focus(); // Focus on the input field for editing
+
+      // Function to handle saving the edited message
+      function saveEditedMessage() {
+        const updatedMessage = editInput.value.trim();
+        // Implement update logic, e.g., send a request to the server to update the message
+        console.log("Update message with ID:", messageid, "New message:", updatedMessage);
+
+        // Replace the input field with the updated message text
+        const updatedTextContent = document.createElement("span");
+        updatedTextContent.setAttribute("name", "textcontent");
+        updatedTextContent.textContent = updatedMessage;
+        messageElement.replaceChild(updatedTextContent, editInput);
+      
+        const formData = new FormData();
+        formData.append('userid', localStorage.getItem('userid'));
+        formData.append('messageid', messageid);
+        formData.append('updatedmessage', updatedMessage);
+        console.log(updatedMessage);
+        fetch("http://127.0.0.1:5000/messages_edit", {
+              method: 'POST',
+              body: formData
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log(data); // Log server response
+            updateChatroom(localStorage.getItem('chatroomid'), 'message updated');
+          })
+          .catch(error => console.error('Error updating message:', error));
+        
+      }
+
+      // Handle saving the edited message when pressing the Enter key
+      function handleKeyPress(event) {
+        if (event.key === "Enter") {
+          saveEditedMessage();
+        }
+      }
+      let clickCount = 0;
+      editInput.addEventListener("keypress", handleKeyPress);
+      function handleClick(event) {
+        clickCount++;
+        if (!editInput.contains(event.target) && clickCount == 2) {
+          saveEditedMessage();
+        }
+      }
+      document.addEventListener("click", handleClick);
+    });
+
     window.onload = function() {
       populateMessage();
     };
-
 
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.2.0/socket.io.js"></script>
@@ -144,14 +294,14 @@
     }
 
     // Send a message when a user sends a message
-    function sendMessage(chatroomid) {
-      console.log('sending message');
-      socket.emit('send_message', { chatroomid: chatroomid });
+    function updateChatroom(chatroomid, message) {
+      console.log(message);
+      socket.emit('server_update_chatroom', { chatroomid: chatroomid });
     }
 
     // Listen for new messages
-    socket.on('new_message', function(data) {
-      console.log('new message received');
+    socket.on('client_update_chatroom', function(data) {
+      console.log('chatroom update received');
       if (data.chatroomid == localStorage.getItem('chatroomid')) {
           // If the new message is for the currently viewed chatroom, update the chat messages
           populateMessage();
