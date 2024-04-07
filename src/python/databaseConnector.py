@@ -6,7 +6,7 @@ from databaseclass import DatabaseConnector
 
 app = Flask(__name__)
 CORS(app)
-socketio = SocketIO(app, cors_allowed_origins="http://127.0.0.1:5500")
+socketio = SocketIO(app, cors_allowed_origins=["http://localhost:3002", "http://127.0.0.1:3002"])
 
 # Initialize your DatabaseConnector
 db_connector = DatabaseConnector(
@@ -115,4 +115,4 @@ def handle_connect():
     print('Client connected')
 
 if __name__ == '__main__':
-    socketio.run(app, debug=True)
+    socketio.run(app, debug=True, allow_unsafe_werkzeug=True)
