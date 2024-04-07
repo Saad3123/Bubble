@@ -101,7 +101,7 @@
           }
           
           // Display message content
-          messageElement.innerHTML = `<span class="bold-name">${message.username}</span>: ${message.text}`;
+          messageElement.innerHTML = `<span class="bold-name">${message.username}:</span><span name="textcontent"> ${message.text}</span>`;
           
           // Attach click event listener to each message element if it's the current user's message
           if (message.userid == localStorage.getItem('userid')) {
@@ -192,6 +192,69 @@
       document.getElementById("popup").style.display = "none";
     });
 
+// Edit message function
+document.getElementById("editButton").addEventListener("click", function(event) {
+  const popup = document.getElementById("popup");
+
+  // Close the popup window
+  popup.style.display = "none";
+
+  const messageid = event.target.getAttribute("data-message-id");
+  const messageElement = document.querySelector(`[data-message-id="${messageid}"]`);
+  const textContentElement = messageElement.querySelector('[name="textcontent"]');
+
+  // Store the original message text
+  const originalMessage = textContentElement.textContent.trim();
+
+  // Create an input field for editing the message text
+  const editInput = document.createElement("input");
+  editInput.type = "text";
+  editInput.value = originalMessage;
+  editInput.classList.add("edit-input");
+
+  // Replace the message text with the input field
+  messageElement.replaceChild(editInput, textContentElement);
+  editInput.focus(); // Focus on the input field for editing
+
+  // Function to handle saving the edited message
+  function saveEditedMessage() {
+    const updatedMessage = editInput.value.trim();
+    // Implement update logic, e.g., send a request to the server to update the message
+    console.log("Update message with ID:", messageid, "New message:", updatedMessage);
+
+    // Replace the input field with the updated message text
+    const updatedTextContent = document.createElement("span");
+    updatedTextContent.setAttribute("name", "textcontent");
+    updatedTextContent.textContent = updatedMessage;
+    messageElement.replaceChild(updatedTextContent, editInput);
+  
+    const formData = new FormData();
+    formData.append('userid', localStorage.getItem('userid'));
+    formData.append('messageid', messageid);
+    formData.append('updatedmessage', updatedMessage);
+    console.log(updatedMessage);
+    fetch("http://127.0.0.1:5000/messages_edit", {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log(data); // Log server response
+        updateChatroom(localStorage.getItem('chatroomid'), 'message updated');
+      })
+      .catch(error => console.error('Error updating message:', error));
+    
+  }
+
+  // Handle saving the edited message when pressing the Enter key
+  function handleKeyPress(event) {
+    if (event.key === "Enter") {
+      saveEditedMessage();
+    }
+  }
+  editInput.addEventListener("keypress", handleKeyPress);
+});
+
     window.onload = function() {
       populateMessage();
     };
@@ -236,24 +299,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-  <!-- <script>
-
-    // Edit message function
-    document.getElementById("editButton").addEventListener("click", function(event) {
-      const messageId = event.target.getAttribute("data-message-id");
-      // You can implement the edit functionality here, e.g., open a modal with the message content for editing
-      console.log("Edit message with ID:", messageId);
-      // You may want to close the popup after editing
-      document.getElementById("popup").style.display = "none";
-    });
-
-    // Your existing JavaScript code
-
-  </script>
-</body>
-</html> -->

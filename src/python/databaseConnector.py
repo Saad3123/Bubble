@@ -139,6 +139,14 @@ def messages_delete():
     result = db_connector.messages_delete(userid, messageid)
     return jsonify({"success": result})  # Placeholder response
 
+@app.route('/messages_edit', methods=['POST'])
+def messages_edit():
+    userid = request.form.get('userid')
+    messageid = request.form.get('messageid')
+    updatedMessage = request.form.get('updatedmessage')
+    result = db_connector.messages_edit(userid, messageid, updatedMessage)
+    return jsonify({"success": result})  # Placeholder response
+
 @socketio.on('connect')
 def handle_connect():
     print('Client connected')
