@@ -65,7 +65,7 @@ class DatabaseConnector:
             result = self.cursor.fetchone()
             
             if result:
-                if check_password(password.encode('utf-8'), result[0]):
+                if check_password(password.encode('utf-8'), result[0].encode('utf-8')):
                     print("email and password match found in the database")
                     return True
                 else:
@@ -295,7 +295,7 @@ class DatabaseConnector:
                 if result[2] == None:
                     print("Successfully joined the chatroom.")
                     return result
-                elif check_password(password.encode('utf-8'), result[2]):
+                elif check_password(password.encode('utf-8'), result[2].encode('utf-8')):
                     print("Successfully joined the chatroom.")
                     return result
                 else:
