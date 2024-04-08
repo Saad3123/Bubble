@@ -1,3 +1,7 @@
+-- current database name
+create database csci375team2_team2_bubble;
+use csci375team2_team2_bubble;
+
 -- create
 CREATE TABLE USERS (
     userid integer NOT NULL AUTO_INCREMENT,
