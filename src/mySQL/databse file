@@ -1,0 +1,57 @@
+-- create
+CREATE TABLE USERS (
+    userid integer NOT NULL AUTO_INCREMENT,
+    email varchar(255) UNIQUE NOT NULL,
+    username varchar(255) NOT NULL,
+    password varchar(255) NOT NULL,
+    bio TEXT,
+    
+    PRIMARY KEY(userid)
+);
+
+CREATE TABLE FRIENDSLIST (
+    userid1 integer NOT NULL,
+    userid2 integer NOT NULL,
+    
+    FOREIGN KEY(userid1) REFERENCES USERS(userid),
+    FOREIGN KEY(userid2) REFERENCES USERS(userid),
+    PRIMARY KEY(userid1, userid2)
+);
+
+CREATE TABLE CHATROOMS(
+    chatroomid integer NOT NULL AUTO_INCREMENT,
+    name varchar(255) UNIQUE NOT NULL,
+    password varchar(255),
+    
+    PRIMARY KEY(chatroomid)
+);
+
+CREATE TABLE MESSAGES(
+    messageid integer NOT NULL AUTO_INCREMENT,
+    chatroomid integer NOT NULL,
+    userid integer NOT NULL,
+    time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    message TEXT NOT NULL,
+    
+    FOREIGN KEY(chatroomid) REFERENCES CHATROOMS(chatroomid),
+    FOREIGN KEY(userid) REFERENCES USERS(userid),
+    PRIMARY KEY(messageid)
+);
+
+CREATE TABLE WHITELISTS(
+    chatroomid integer NOT NULL,
+    userid integer NOT NULL,
+    adminstatus boolean DEFAULT FALSE,
+
+    FOREIGN KEY(chatroomid) REFERENCES CHATROOMS(chatroomid),
+    FOREIGN KEY(userid) REFERENCES USERS(userid),
+    PRIMARY KEY(chatroomid,userid)
+);
+
+-- base ID
+ALTER TABLE USERS AUTO_INCREMENT=100;
+ALTER TABLE CHATROOMS AUTO_INCREMENT=100;
+ALTER TABLE MESSAGES AUTO_INCREMENT=100;
+
+-- timezone
+SET time_zone ='-07:00';
