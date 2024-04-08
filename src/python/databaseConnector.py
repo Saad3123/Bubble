@@ -2,7 +2,6 @@ from flask import Flask, send_from_directory, request, jsonify
 from flask_cors import CORS
 import threading
 from flask_socketio import SocketIO, emit, join_room, leave_room
-
 from databaseclass import DatabaseConnector
 
 app = Flask(__name__)
@@ -14,7 +13,7 @@ db_connector = DatabaseConnector(
     host='127.0.0.1', 
     username='csci375team2', 
     password='sihj715gtdjx', 
-    database='csci375team2_testdb_bubble'
+    database='csci375team2_team2_bubble'
 )
 db_connector.connect()
 
