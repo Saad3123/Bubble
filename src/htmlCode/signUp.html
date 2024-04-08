@@ -68,9 +68,10 @@
             })
             .then(data => {
                 if (data.success) {
-                    alert('Account registered');
+                  console.log("Account succesfully registerd")
+                  alert('Account registered');
                 } else {
-                    alert('Account not registered');
+                  alert('Account not registered');
                 }
             })
             .catch(error => {

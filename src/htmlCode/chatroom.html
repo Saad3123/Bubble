@@ -88,6 +88,7 @@ function populateMessage() {
   })
   .then(response => response.json())
   .then(data => {
+    console.log("Acquiring message history");
     messagesFromDB = data.success;
     const chatMessages = document.getElementById("chatMessages");
     chatMessages.innerHTML = ""; // Clear previous messages
@@ -150,7 +151,7 @@ function populateMessage() {
         })
         .then(response => response.json())
         .then(data => {
-          console.log(data); // Log server response
+          console.log("Successfully sent message");
           updateChatroom(localStorage.getItem('chatroomid'), 'sending message'); //emit message send?
           messageInput.value = ""; // Clear input field after sending
         })
@@ -161,6 +162,7 @@ function populateMessage() {
     // Function to go back to homepage
     function goBack() {
       if(localStorage.getItem('chatroomid')){
+        console.log("LEaving chatroom");
         localStorage.removeItem('chatroomid');
       }
       window.location.href = "homePage";
@@ -168,6 +170,7 @@ function populateMessage() {
 
     // Close popup when clicking outside of it or clicking the exit button
     window.addEventListener("click", function(event) {
+      console.log("Closing message option menu");
       const popup = document.getElementById("popup");
       if (event.target === popup || event.target.id === "exitButton") {
         popup.style.display = "none";
@@ -178,7 +181,7 @@ function populateMessage() {
     document.getElementById("deleteButton").addEventListener("click", function(event) {
       const messageid = event.target.getAttribute("data-message-id");
       // Implement deletion logic, e.g., send a request to the server to delete the message
-      console.log("Delete message with ID:", messageid);
+      console.log("Attempting to delete message ID:", messageid);
 
       //code to delete message goes here
       const formData = new FormData();
@@ -192,7 +195,7 @@ function populateMessage() {
       })
       .then(response => response.json())
       .then(data => {
-        console.log(data); // Log server response
+        console.log("Message has been deleted"); // Log server response
         updateChatroom(localStorage.getItem('chatroomid'), 'message deleted');
       })
       .catch(error => console.error('Error deleting message:', error));
@@ -204,6 +207,8 @@ function populateMessage() {
     // Edit message function
     document.getElementById("editButton").addEventListener("click", function(event) {
       const popup = document.getElementById("popup");
+
+      console.log("Attempting to edit message");
 
       // Close the popup window
       popup.style.display = "none";
@@ -228,8 +233,6 @@ function populateMessage() {
       // Function to handle saving the edited message
       function saveEditedMessage() {
         const updatedMessage = editInput.value.trim();
-        // Implement update logic, e.g., send a request to the server to update the message
-        console.log("Update message with ID:", messageid, "New message:", updatedMessage);
 
         // Replace the input field with the updated message text
         const updatedTextContent = document.createElement("span");
@@ -248,7 +251,7 @@ function populateMessage() {
           })
           .then(response => response.json())
           .then(data => {
-            console.log(data); // Log server response
+            console.log("Edited message with ID:", messageid, "New message:", updatedMessage);
             updateChatroom(localStorage.getItem('chatroomid'), 'message updated');
           })
           .catch(error => console.error('Error updating message:', error));
@@ -261,6 +264,7 @@ function populateMessage() {
           saveEditedMessage();
         }
       }
+
       let clickCount = 0;
       editInput.addEventListener("keypress", handleKeyPress);
       function handleClick(event) {
