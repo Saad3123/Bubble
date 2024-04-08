@@ -168,7 +168,6 @@ def on_leave(data):
 # Handle sending messages
 @socketio.on('server_update_chatroom')
 def handle_message(data):
-    print('emit reached?')
     chatroomid = data['chatroomid']
     emit('client_update_chatroom', {'chatroomid': chatroomid}, room=chatroomid)
 

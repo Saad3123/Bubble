@@ -262,9 +262,7 @@ class DatabaseConnector:
         try:
             self.cursor.execute(query)
             chatrooms = self.cursor.fetchall()
-            print("List of chatrooms:")
-            for chatroom in chatrooms:
-                print(chatroom)
+            print("Chatrooms acquired")
             return chatrooms
         except mysql.connector.Error as err:
             print("Error listing chatrooms:", err)
