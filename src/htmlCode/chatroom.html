@@ -277,6 +277,9 @@ function populateMessage() {
     });
 
     window.onload = function() {
+      if (!localStorage.getItem('chatroomid')){
+        window.location.href = "homePage";
+      }
       populateMessage();
     };
 
