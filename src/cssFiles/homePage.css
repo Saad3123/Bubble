@@ -21,21 +21,19 @@ body {
   top: 50%;
   left: 50%;
   text-align: center;
-  width: 800px; /* Adjust the width as needed */
+  width: 800px;
   transform: translate(-50%, -50%);
-  background-color: rgba(64, 5, 109, 0.8); /* Transparent purple color with 80% opacity */
+  background-color: rgba(64, 5, 109, 0.8); 
   max-width: 800px;
   margin: 50px auto;
   padding: 20px;
   border-radius: 10px;
 }
 
-/* Existing CSS styles */
 th, td, h1 {
-  color: white; /* Set text color to light gray */
+  color: white; 
 }
 
-/* New CSS styles for table */
 table {
   border-collapse: collapse; 
   width: 100%; 
@@ -71,7 +69,7 @@ button.join {
   padding: 8px 16px;
   border-radius: 5px;
   cursor: pointer;
-  margin-right: 10px; /* Add margin-right for gap */
+  margin-right: 10px; 
 }
 
 button.delete {
@@ -86,14 +84,14 @@ button.delete {
 
 .navbar {
   overflow: hidden;
-  background-color: #333; /* Dark background color */
+  background-color: #333; 
 }
 
 /* Links inside the navigation bar */
 .navbar a {
   float: right;
   display: block;
-  color: #f2f2f2; /* Light text color */
+  color: #f2f2f2; 
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
@@ -101,23 +99,23 @@ button.delete {
 
 /* Change background color of links on hover */
 .navbar a:hover {
-  background-color: #ddd; /* Light background color on hover */
-  color: black; /* Dark text color on hover */
+  background-color: #ddd; 
+  color: black; 
 }
 
 /* Style for the logout button */
 .logout-btn {
   float: left;
   display: block;
-  color: #f2f2f2; /* Light text color */
+  color: #f2f2f2; 
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-  background-color: #333; /* Dark background color */
+  background-color: #333; 
 }
 
 /* Change background color of logout button on hover */
 .logout-btn:hover {
-  background-color: #ddd; /* Light background color on hover */
-  color: black; /* Dark text color on hover */
+  background-color: #ddd; 
+  color: black; 
 }
