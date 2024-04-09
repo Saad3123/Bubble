@@ -236,8 +236,11 @@ function populateMessage() {
     });
 
     window.onload = function() {
-      if (!localStorage.getItem('chatroomid')){
+      if (localStorage.getItem('chatroomid') === null){
         window.location.href = "homePage";
+      }
+      if(localStorage.getItem('userid') === null || localStorage.getItem('email') === null || localStorage.getItem('username') === null|| localStorage.getItem('bio') === null){
+        window.location.href = "index";
       }
       populateMessage();
     };
