@@ -176,6 +176,10 @@
     }
 
     window.onload = function() {
+      if(localStorage.getItem('userid') === null){
+        window.location.href = "index";
+      }
+
       populateChatroomList();
     };
 
