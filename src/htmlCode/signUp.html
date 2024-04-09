@@ -41,76 +41,78 @@
       </div>
       <!-- Domain Expansion: "JavaScript"  -->
       <script>
-         const pass_field = document.querySelector('.pass-key');
-         const showBtn = document.querySelector('.show');
-         showBtn.addEventListener('click', function(){
-          if(pass_field.type === "password"){
-            pass_field.type = "text";
-            showBtn.textContent = "HIDE";
-            showBtn.style.color = "#3498db";
-          }else{
-            pass_field.type = "password";
-            showBtn.textContent = "SHOW";
-            showBtn.style.color = "#222";
-          }
-         });
+            const pass_field = document.querySelector('.pass-key');
+            const showBtn = document.querySelector('.show');
+            showBtn.addEventListener('click', function(){
+            if(pass_field.type === "password"){
+                pass_field.type = "text";
+                showBtn.textContent = "HIDE";
+                showBtn.style.color = "#3498db";
+            }else{
+                pass_field.type = "password";
+                showBtn.textContent = "SHOW";
+                showBtn.style.color = "#222";
+            }
+            });
 
-         document.getElementById('signUpForm').addEventListener('submit', function(event) {
-            event.preventDefault(); // Prevent the default form submission
-            const formData = new FormData(this);
-            fetch("http://127.0.0.1:5000/user_register", {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                  console.log("Account succesfully registerd")
-                  alert('Account registered');
-                  continueToHomepage(email);
-                } else {
-                  alert('Account not registered');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
+            document.getElementById('signUpForm').addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent the default form submission
+                const email = document.getElementById('email').value;
+                const formData = new FormData(this);
+                fetch("http://127.0.0.1:5000/user_register", {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                    console.log("Account succesfully registerd")
+                        alert('Account registered');
+                        continueToHomepage(email);
+                    } else {
+                        alert('Account not registered');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
             });
-        });
-        function continueToHompage(email){
-            const formData = new FormData();
-            formData.append('email', email)
-            fetch("http://127.0.0.1:5000/user_return_info", {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                if (data.success) {
-                    results = data.success; 
-                    console.log("setting user information");
-                    localStorage.setItem('userid', results.userid);
-                    localStorage.setItem('email', results.email);
-                    localStorage.setItem('username', results.username);
-                    localStorage.setItem('bio', results.bio);
-                    window.location.href = "/homePage";
-                } else {
-                    alert('Failed to retrieve user data!');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
+
+            function continueToHomepage(email){
+                const formData = new FormData();
+                formData.append('email', email)
+                fetch("http://127.0.0.1:5000/user_return_info", {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        results = data.success; 
+                        console.log("setting user information");
+                        localStorage.setItem('userid', results.userid);
+                        localStorage.setItem('email', results.email);
+                        localStorage.setItem('username', results.username);
+                        localStorage.setItem('bio', results.bio);
+                        window.location.href = "/homePage";
+                    } else {
+                        alert('Failed to retrieve user data!');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            }
       </script>
 
    </body>
