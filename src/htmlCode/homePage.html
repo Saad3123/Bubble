@@ -176,7 +176,7 @@
     }
 
     window.onload = function() {
-      if(localStorage.getItem('userid') === null){
+      if(localStorage.getItem('userid') === null || localStorage.getItem('email') === null || localStorage.getItem('username') === null|| localStorage.getItem('bio') === null){
         window.location.href = "index";
       }
 
