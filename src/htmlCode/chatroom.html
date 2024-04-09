@@ -280,6 +280,9 @@ function populateMessage() {
       if (localStorage.getItem('chatroomid') === null){
         window.location.href = "homePage";
       }
+      if(localStorage.getItem('userid') === null || localStorage.getItem('email') === null || localStorage.getItem('username') === null|| localStorage.getItem('bio') === null){
+        window.location.href = "index";
+      }
       populateMessage();
     };
 
