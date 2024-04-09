@@ -29,7 +29,5 @@ node server.js &
 echo "Connecting to the database..."
 python src/python/databaseConnector.py
 
-# Optionally, you can add more commands or operations here
-
 # Exit gracefully
 exit 0

@@ -2,4 +2,4 @@ flask
 flask-cors
 flask-socketio
 mysql.connector
-npm install express
+bcrypt

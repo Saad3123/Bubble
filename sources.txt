@@ -1,11 +1,2 @@
 1. Login Page Frame: https://www.codingnepalweb.com/transparent-login-form-html-css-javascript/
 2. Login Background: https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.pinterest.com%2Fpin%2F564990715732825440%2F&psig=AOvVaw03Sd7lloAdC2RgCRmvjaTG&ust=1709512910297000&source=images&cd=vfe&opi=89978449&ved=0CBUQjhxqFwoTCMCo2KDu1oQDFQAAAAAdAAAAABAE
-
-1. dolphin tunnel
-    "ssh -N -L 3306:dolphin.csci.viu.ca:3306 studentaccount@otter.csci.viu.ca" in P 3306
-2. use "go live" to host in P 5500
-3. "python src/python/databaseConnector.py" to connect to db in P 5000
-
-how to kill port
-lsof -ti :PORT_NUMBER
-kill pid

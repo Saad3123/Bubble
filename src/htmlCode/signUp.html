@@ -1,3 +1,5 @@
+ 
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
    <head>
@@ -70,6 +72,7 @@
                 if (data.success) {
                   console.log("Account succesfully registerd")
                   alert('Account registered');
+                  continueToHomepage(email);
                 } else {
                   alert('Account not registered');
                 }
@@ -78,6 +81,37 @@
                 console.error('Error:', error);
             });
         });
+        function continueToHompage(email){
+            const formData = new FormData();
+            formData.append('email', email)
+            fetch("http://127.0.0.1:5000/user_return_info", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    results = data.success; 
+                    console.log("setting user information");
+                    localStorage.setItem('userid', results.userid);
+                    localStorage.setItem('email', results.email);
+                    localStorage.setItem('username', results.username);
+                    localStorage.setItem('bio', results.bio);
+                    window.location.href = "/homePage";
+                } else {
+                    alert('Failed to retrieve user data!');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
       </script>
+
    </body>
 </html>
