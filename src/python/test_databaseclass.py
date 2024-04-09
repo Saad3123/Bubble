@@ -51,13 +51,19 @@ class TestDatabaseConnector(unittest.TestCase):
 
     def tearDown(self):
         # Clean up created users and chatrooms
-        self.db_connector.user_delete(self.user_email)
-        self.db_connector.user_delete(self.user_delete_email)
-        self.db_connector.chatrooms_delete(self.chatroom_name)
-        self.db_connector.chatrooms_delete(self.join_chatroom_name)
-        self.db_connector.chatrooms_delete(self.send_message_chatroom_name)
-        self.db_connector.chatrooms_delete(self.edit_delete_chatroom_name)
-        self.db_connector.user_delete(self.edit_delete_user_email)
+        if(self.db_connector.user_return_info(self.user_email) != False):
+            self.db_connector.user_delete(self.db_connector.user_return_info(self.user_email)[0])
+        if(self.db_connector.user_return_info(self.user_delete_email) != False):
+            self.db_connector.user_delete(self.db_connector.user_return_info(self.user_delete_email)[0])
+        if(self.db_connector.user_return_info(self.edit_delete_user_email) != False):
+            self.db_connector.user_delete(self.db_connector.user_return_info(self.edit_delete_user_email)[0])
+
+        chatroomIDs = self.db_connector.chatrooms_list()
+        for chatrooms in chatroomIDs:
+            self.db_connector.chatrooms_delete(chatrooms[0])
+            self.db_connector.chatrooms_delete(chatrooms[0])
+            self.db_connector.chatrooms_delete(chatrooms[0])
+            self.db_connector.chatrooms_delete(chatrooms[0])
 
     def test_user_register_and_return_info(self):
         info = self.db_connector.user_return_info(self.user_email)
@@ -99,8 +105,8 @@ class TestDatabaseConnector(unittest.TestCase):
         messages = self.db_connector.messages_list_in_chatroom(chatroom_id)
         message_id = messages[0][0]
         new_message_content = "Edited message"
-        self.assertTrue(self.db_connector.messages_edit(userid, chatroom_id, message_id, new_message_content))
-        self.assertTrue(self.db_connector.messages_delete(userid, chatroom_id, message_id))
+        self.assertTrue(self.db_connector.messages_edit(userid, message_id, new_message_content))
+        self.assertTrue(self.db_connector.messages_delete(userid, message_id))
 
     def test_messages_list_in_chatroom(self):
         chatrooms = self.db_connector.chatrooms_list()

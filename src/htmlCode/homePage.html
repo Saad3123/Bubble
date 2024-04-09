@@ -50,8 +50,7 @@
           chatroomsFromDB = data.success;
           const chatroomList = document.getElementById("chatroomList");
           chatroomList.innerHTML = "";
-          console.log("test");
-          console.log(chatroomsFromDB);
+          console.log("Loading chatrooms");
           for (let i = 0; i < chatroomsFromDB.length; i++) {
             const chatroom = chatroomsFromDB[i];
             const row = document.createElement("tr");
@@ -94,6 +93,7 @@
             .then(data => {
               if (data.success) {
                 alert(`Joining room ${chatroomid}`);
+                console.log("joining chatroom");
                 localStorage.setItem('chatroomid', chatroomid);
                 window.location.href = "/chatroom";
               } else {
@@ -129,6 +129,7 @@
         .then(response => response.json())
         .then(data => {
           if (data.success) {
+            console.log("deleting chatrooms");
             alert(`Room with ID ${chatroomid} has been deleted.`);
             // Refresh the room list
             populateChatroomList();
@@ -159,6 +160,7 @@
         .then(data => {
           if (data.success) {
             alert("Room created successfully");
+            console.log("creating chatroom");
             // Refresh the room list
             populateChatroomList();
           } else {
@@ -195,7 +197,8 @@
         localStorage.removeItem('chatroomid');
       }
       // Redirect to the login page or any other desired location
-      window.location.href = "index";
+    
+      window.location.href = "/index";
     }
   </script>
 </html>

@@ -1,4 +1,5 @@
 import mysql.connector
+from hash import get_hashed_password, check_password
 
 class DatabaseConnector:
     """
@@ -56,18 +57,22 @@ class DatabaseConnector:
             - returns false on a failed login
     """
     def user_login(self, email, password):
-        query = "SELECT * FROM USERS WHERE email = %s AND password = %s"
-        values = (email, password)
+        query = "SELECT password FROM USERS WHERE email = %s"
+        values = (email,)
         
         try:
             self.cursor.execute(query, values)
             result = self.cursor.fetchone()
             
             if result:
-                print("email and password match found in the database")
-                return True
+                if check_password(password.encode('utf-8'), result[0].encode('utf-8')):
+                    print("email and password match found in the database")
+                    return True
+                else:
+                    print("email or password do not match any records in the database")
+                    return False
             else:
-                print("email and password do not match any records in the database")
+                print("email or password do not match any records in the database")
                 return False
         except mysql.connector.Error as err:
             print("Error checking credentials:", err)
@@ -99,7 +104,7 @@ class DatabaseConnector:
 
         # Register new user
         query_register_user = "INSERT INTO USERS (email, username, password) VALUES (%s, %s, %s)"
-        values_register_user = (email, username, password)
+        values_register_user = (email, username, get_hashed_password(password.encode('utf-8')))
         try:
             self.cursor.execute(query_register_user, values_register_user)
             self.connection.commit()
@@ -216,7 +221,11 @@ class DatabaseConnector:
 
         # Create new chatroom
         query_create_chatroom = "INSERT INTO CHATROOMS (name, password) VALUES (%s, %s)"
-        values_create_chatroom = (name, password)
+        if password != None:
+            values_create_chatroom = (name, get_hashed_password(password.encode('utf-8')))
+        else:
+            values_create_chatroom = (name, password)
+
         try:
             self.cursor.execute(query_create_chatroom, values_create_chatroom)
             self.connection.commit()
@@ -262,9 +271,7 @@ class DatabaseConnector:
         try:
             self.cursor.execute(query)
             chatrooms = self.cursor.fetchall()
-            print("List of chatrooms:")
-            for chatroom in chatrooms:
-                print(chatroom)
+            print("Chatrooms acquired")
             return chatrooms
         except mysql.connector.Error as err:
             print("Error listing chatrooms:", err)
@@ -279,18 +286,21 @@ class DatabaseConnector:
             - returns false otherwise
     """
     def chatrooms_join(self, chatroomid, password=None):
-        if password:
-            query = "SELECT * FROM CHATROOMS WHERE chatroomid = %s AND password = %s"
-            values = (chatroomid, password)
-        else:
-            query = "SELECT * FROM CHATROOMS WHERE chatroomid = %s AND password IS NULL"
-            values = (chatroomid,)
+        query = "SELECT chatroomid,name,password FROM CHATROOMS WHERE chatroomid = %s"
+        values = (chatroomid,)
         try:
             self.cursor.execute(query, values)
-            chatroom = self.cursor.fetchone()
-            if chatroom:
-                print("Successfully joined the chatroom.")
-                return chatroom
+            result = self.cursor.fetchone()
+            if result:
+                if result[2] == None:
+                    print("Successfully joined the chatroom.")
+                    return result
+                elif check_password(password.encode('utf-8'), result[2].encode('utf-8')):
+                    print("Successfully joined the chatroom.")
+                    return result
+                else:
+                    print("Failed to join the chatroom. Invalid chatroomid or password.")
+                    return None
             else:
                 print("Failed to join the chatroom. Invalid chatroomid or password.")
                 return None
