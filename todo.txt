@@ -1,0 +1,48 @@
+Using Bubbles:
+
+Upon compiling Bubbles and opening port 3002 in a web browse, the user should be looking at the Bubbles login page, where they can sign-in or sign-up to begin chatting.
+Registering for an account will refresh the page, and the user can then login with their associated email and password.
+After doing so the user can either join an existing chatroom, or create their own via the + button. They can also logout at any time via the top right logout button.
+Upon entering a chatroom the user can view previously sent messages, as well as send their own messages. Upon sending a message the user is also able to edit and delete that message by a prompt accessed when clicking on it.
+While in a chatroom the user can exit at anytime via the Back/ExitRoom button at the top right of the screen.
+
+
+
+Trouble Shooting problems
+1. Errors with establishing connections to port 
+
+3002: 
+	install node to fix it
+		> npm install node
+3006 or "error connecting to database": 
+	run
+		>ssh -N -L 3306:dolphin.csci.viu.ca:3306 <csci lab username>@otter.csci.viu.ca &
+	the terminal should freeze, if not do these steps
+
+	1. check whether the public-private keys exist in your local computer.
+		> ls ~/.ssh
+	this should contain "id_rsa" and "is_rsa.pub". 
+	Test connecting to the CSCI server using your account and the new key pair.
+		> ssh -i ~/.ssh/csci_id_rsa <CSCI lab username>@csci.viu.ca
+	NOTE: if running successfully, it will look something like the screen has been frozen
+	
+	2. if 3006 not initializing when ./startProgram <CSCI lab username> and if weird behavior is seen in the terminal, you probably need to enter the password midst of making connections. once you hit enter after entering password, you will be able to see all the 3 ports active
+
+
+Trouble while accessing the program
+If the messages or chatrooms disappear all of sudden, try closing the ports and ./startProgram <id> again.	
+If an error stating port<portnumber> is already running, follow these steps
+	1. "ctrl+c" to stop the program
+	2. to see the PID that we need to close 
+		> lsof -i :<port_number> 
+	3. to delete the PID
+		> kill -9 <PID>
+	4. check again 
+		> sof -i :<port_number> 	
+    	There shouldn't be anything present
+	5. once everything is cleared, run 
+		> ./startProgram <CSCI lab username>
+
+
+ 
+	
